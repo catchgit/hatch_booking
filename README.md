@@ -1,6 +1,6 @@
 <p align="center"><img width=60% src="https://github.com/catchgit/hatch_booking/blob/main/media/catch.png"></p>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ![React](https://img.shields.io/badge/react-v18-blue.svg)
 ![TypeScript](https://img.shields.io/badge/typescript-v4.9+-blue.svg)
 [![Build Status](https://api.travis-ci.com/catchgit/hatch_booking.svg?branch=main)](https://travis-ci.org/catchgit/hatch_booking)
