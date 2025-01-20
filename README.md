@@ -11,7 +11,6 @@
 
 Booking solution for Hatch to manage clients and rooms with API integration to Microsoft 365. Using Google Firebase as Authentication and Database.
 
-<br>
 
 ## Installing
 
