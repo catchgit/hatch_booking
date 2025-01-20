@@ -1,0 +1,8 @@
+{
+    "general_login": "Logg inn",
+    "login_welcome": "Velkommen",
+    "login_introtext": "For å booke en av våre rom må du først logge inn. Har du ikke bruker ta kontakt med oss på post@catchmedia.no",
+    "login_email_label": "E-postadresse",
+    "login_password_label": "Passord",
+    "login_error": "Finner ingen bruker med denne e-post/passord kombinasjon"
+}

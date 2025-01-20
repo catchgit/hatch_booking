@@ -1,13 +1,17 @@
+import Button from "../components/Button";
 import { useAuthContext } from "../providers/AuthProvider"
 
 
 const Dashboard = () => {
-    const { currentUser } = useAuthContext();
+    const { signOut } = useAuthContext();
 
     return (
         <div className="container">
             <h1>Dashboard</h1>
-            {JSON.stringify(currentUser)}
+            <Button
+                text="logg ut"
+                onClick={signOut}
+            />
         </div>
     )
 }
