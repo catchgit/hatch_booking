@@ -4,8 +4,6 @@ import Dashboard from "./screens/Dashboard";
 
 
 const Navigation = () => {
-
-
     return (
         <BrowserRouter>
             <Routes>

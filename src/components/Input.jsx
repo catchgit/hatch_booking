@@ -1,19 +1,7 @@
-
-type InputType = {
-    value: string;
-    onChange: (value: string) => void;
-    onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
-    type?: 'text' | 'password' | 'email';
-    col?: string;
-    name: string;
-    label: string;
-    autoComplete?: string;
-}
-
-const Input = (props: InputType) => {
+const Input = (props) => {
     const { value, onChange, type = 'text', col = 'col-12', name, label, autoComplete, onBlur } = props;
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e) => {
         onChange(e.target.value);
     }
 

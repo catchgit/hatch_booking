@@ -1,12 +1,11 @@
 import Navigation from "./Navigation";
-import { useAuthContext } from "./providers/AuthProvider";
+import { useAuthContext } from "./provider/AuthProvider";
 import Login from "./screens/Login";
 
-
 const Auth = () => {
-    const { currentUser } = useAuthContext();
+    const { user } = useAuthContext();
 
-    if (!currentUser) {
+    if (!user) {
         return <Login />
     }
 

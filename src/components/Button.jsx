@@ -1,11 +1,4 @@
-type ButtonType = {
-    text: string;
-    type?: string;
-    onClick?: () => void;
-    disabled?: boolean;
-}
-
-const Button = (props: ButtonType) => {
+const Button = (props) => {
     const { text, type = 'primary', onClick, disabled } = props;
 
     const handleClick = () => {

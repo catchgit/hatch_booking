@@ -1,26 +1,8 @@
-<p align="center"><img width=60% src="https://github.com/catchgit/hatch_booking/blob/main/media/catch.png"></p>
+# React + Vite
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-![React](https://img.shields.io/badge/react-v18-blue.svg)
-![TypeScript](https://img.shields.io/badge/typescript-v4.9+-blue.svg)
-[![Build Status](https://api.travis-ci.com/catchgit/hatch_booking.svg?branch=main)](https://travis-ci.org/catchgit/hatch_booking)
-![Dependencies](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen.svg)
-[![GitHub Issues](https://img.shields.io/github/issues/catchgit/hatch_booking.svg)](https://github.com/catchgit/hatch_booking/issues)
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Basic Overview
+Currently, two official plugins are available:
 
-Booking solution for Hatch to manage clients and rooms with API integration to Microsoft 365. Using Google Firebase as Authentication and Database.
-
-
-## Installing
-
-```bash
-npm install
-```
-
-## Information
-
-The application uses i18n provider to manage texts and language. The different languages are located in public/locales/[language]/translation.json. To use the translations:
-```bash
-<p>{t('example_key')}<p>
-```
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
