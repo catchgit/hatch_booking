@@ -1,14 +1,15 @@
 import { useEffect } from "react";
 import { BrowserRouter, Outlet, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Dashboard from "./screens/Dashboard";
+import Calendar from "./screens/Calendar";
 
 
 const Navigation = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<App />}>
-                    <Route path="/oversikt" element={<Dashboard />}>
+                <Route path="/" element={<Calendar />}>
+                    <Route path="/oversikt" element={<Calendar />}>
 
                     </Route>
                 </Route>

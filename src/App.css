@@ -1,0 +1,13 @@
+.rbc-event {
+    display: flex;
+    justify-content: center;
+    /* Horizontally center text */
+    align-items: center;
+    /* Vertically center text */
+    font-size: 10px;
+    /* Dynamically resize text */
+    white-space: nowrap;
+    /* Prevent text from wrapping */
+    overflow: hidden;
+    /* Hide overflow */
+}
