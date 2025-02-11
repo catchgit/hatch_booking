@@ -16,9 +16,9 @@ function TestMicrosoftGraph() {
   const [selectedEvent, setSelectedEvent] = useState(null);  // New state to store the selected event
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
 
-  const clientID = // Insert client ID here
-  const tenantID = // Insert Tenant ID here
-  const clientSecret = // Insert secret key here
+  const clientID = ""// Insert client ID here
+  const tenantID = ""// Insert Tenant ID here
+  const clientSecret ="" // Insert secret key here
 
   const getAccessToken = async () => {
     try {

@@ -1,6 +1,9 @@
+import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
-import { PublicClientApplication } from '@azure/msal-browser';
-import { msalConfig, graphApiScopes } from "../authConfig";
+import Login from "../screens/Login";
+
+// There is no user login
+// There is a general code for login that needs to be correct
 
 const AuthContext = createContext(null);
 
@@ -13,65 +16,73 @@ const useAuthContext = () => {
     return context;
 }
 
-const msalInstance = new PublicClientApplication(msalConfig);
-
 const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
     const [accessToken, setAccessToken] = useState(null);
-    const [isInitialized, setIsInitialized] = useState(false);
+    const [tokenChecked, setTokenChecked] = useState(false);
 
-    // Initialize MSAL instance
-    useEffect(() => {
-        msalInstance.initialize()
-            .then(() => {
-                setIsInitialized(true);
-                const accounts = msalInstance.getAllAccounts();
-                if (accounts.length > 0) {
-                    const currentAccount = accounts[0];
-                    msalInstance
-                        .acquireTokenSilent({ scopes: graphApiScopes, account: currentAccount })
-                        .then((response) => {
-                            setUser(currentAccount);
-                            setAccessToken(response.accessToken);
-                        })
-                        .catch((error) => {
-                            console.error('Error acquiring token silently', error);
-                        });
-                }
-            })
-            .catch((error) => {
-                console.error("Error initializing MSAL:", error);
+    // Check for accesstoken in localstorage and validate
+    const validateToken = async () => {
+        const localToken = localStorage.getItem('bookingAccessToken');
+
+        try {
+            const res = await axios.post(import.meta.env.VITE_API, {
+                action: 'validateToken',
+                token: localToken
             });
-    }, []);
 
-    if (!isInitialized) {
-        return null; // Or a loading spinner if you prefer
+            if (res.data.status === 200) {
+                setAccessToken(res.data.accessToken);
+            } else {
+                setAccessToken(null);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setTokenChecked(true);
+        }
+
     }
+
+    useEffect(() => {
+        validateToken();
+    }, []);
 
     return (
         <AuthContext.Provider value={{
-            user,
-            accessToken,
-            signIn: () => {
-                msalInstance
-                    .loginPopup({ scopes: graphApiScopes })
-                    .then((response) => {
-                        setUser(response.account);
-                        setAccessToken(response.accessToken);
-                    })
-                    .catch((error) => {
-                        console.error('Sign-in error', error);
+            apiCall: async (data) => {
+                if (!data.action) {
+                    console.warn("No action provided");
+                    return;
+                }
+
+                try {
+                    const response = await axios({
+                        method: 'post',
+                        url: import.meta.env.VITE_API,
+                        data: data
                     });
+
+                    if (response.status === 200) {
+                        // Check for unauthorized acces
+                        if (response.data.status === 401) {
+                            setAccessToken(null);
+                            return false;
+                        }
+
+                        return response.data;
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
             },
-            signOut: () => {
-                msalInstance.logout();
-                setUser(null);
-                setAccessToken(null);
+            updateAccessToken: (token) => {
+                setAccessToken(token);
             }
         }}>
-            {children}
+            {!tokenChecked ? null : !accessToken ? <Login /> : children}
         </AuthContext.Provider>
     )
 }
 
 export { AuthProvider, useAuthContext };
+

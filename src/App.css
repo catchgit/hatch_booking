@@ -1,13 +1,81 @@
-.rbc-event {
-    display: flex;
-    justify-content: center;
-    /* Horizontally center text */
-    align-items: center;
-    /* Vertically center text */
-    font-size: 10px;
-    /* Dynamically resize text */
-    white-space: nowrap;
-    /* Prevent text from wrapping */
-    overflow: hidden;
-    /* Hide overflow */
+@font-face {
+    font-family: 'AvenirNextLTPro';
+    src: url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_2_0.eot');
+    src: url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_2_0.eot?#iefix') format('embedded-opentype'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_2_0.woff2') format('woff2'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_2_0.woff') format('woff'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_2_0.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'AvenirNextLTPro';
+    src: url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_4_0.eot');
+    src: url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_4_0.eot?#iefix') format('embedded-opentype'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_4_0.woff2') format('woff2'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_4_0.woff') format('woff'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_4_0.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'AvenirNextLTPro';
+    src: url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_3_0.eot');
+    src: url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_3_0.eot?#iefix') format('embedded-opentype'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_3_0.woff2') format('woff2'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_3_0.woff') format('woff'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_3_0.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'AvenirNextLTPro';
+    src: url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_1_0.eot');
+    src: url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_1_0.eot?#iefix') format('embedded-opentype'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_1_0.woff2') format('woff2'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_1_0.woff') format('woff'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_1_0.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'AvenirNextLTPro';
+    src: url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_0_0.eot');
+    src: url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_0_0.eot?#iefix') format('embedded-opentype'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_0_0.woff2') format('woff2'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_0_0.woff') format('woff'), url('https://www.catchmedia.no/assets/webfonts/avenir-next/38E368_0_0.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+body {
+    background-color: var(--bs-primary) !important;
+    font-family: 'AvenirNextLTPro', sans-serif !important;
+}
+
+h1 {
+    color: #FFFFFF;
+}
+
+/* Numpad */
+.numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    justify-items: center;
+    width: fit-content;
+}
+
+.numpad-item {
+    background-color: rgba(255, 255, 255, .10);
+    border-radius: 50%;
+    width: 4rem;
+    height: 4rem;
+    display: grid;
+    place-items: center;
+    color: #FFFFFF;
+    font-size: 1.5rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.numpad-item:hover {
+    background-color: rgba(255, 255, 255, .20);
+}
+
+.pin-dot {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 255, 255, .10);
+    border-radius: 50%;
 }
