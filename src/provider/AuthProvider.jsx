@@ -59,7 +59,10 @@ const AuthProvider = ({ children }) => {
                     const response = await axios({
                         method: 'post',
                         url: import.meta.env.VITE_API,
-                        data: data
+                        data: {
+                            token: accessToken,
+                            ...data
+                        }
                     });
 
                     if (response.status === 200) {

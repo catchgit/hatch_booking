@@ -6,8 +6,20 @@
     color.channel($value, "blue", $space: rgb);
 }
 
+$headings-font-weight:        500;
+$font-size-base:              1rem;
 
-$primary: #22274E;
+$h1-font-size:                $font-size-base * 2.5;
+$h2-font-size:                $font-size-base * 2.5;
+$h3-font-size:                $font-size-base * 1.75;
+$h4-font-size:                $font-size-base * 1.25;
+$h5-font-size:                $font-size-base * 1;
+$h6-font-size:                $font-size-base * 0.9;
+
+$primary:                    #22274E;
+$light:                      rgba(255, 255, 255, .5);
+$danger:                     #CC0043;
+
 $headings-color: #FFFFFF;
 
 @import '../../node_modules/bootstrap/scss/bootstrap';

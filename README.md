@@ -1,8 +1,22 @@
-# React + Vite
+## Installasjon
+#### Install all packages
+```bash
+npm install
+```
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+#### Add fontawesome
+```bash
+npm config set "@fortawesome:registry" https://npm.fontawesome.com/
+npm config set "//npm.fontawesome.com/:_authToken" F01127F1-8BB5-47F8-AE58-CBF0185F34C6
+```
 
-Currently, two official plugins are available:
+#### Add .env file with necessary keys
+```bash
+# General
+VITE_API=
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+#### Run the application
+```bash
+npm run dev
+```

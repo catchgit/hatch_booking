@@ -9,6 +9,14 @@ import { msalConfig } from './authConfig';
 import './i18n.js';
 import { AuthProvider } from './provider/AuthProvider.jsx';
 import './sass/bootstrap-custom.scss';
+import 'swiper/css';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/pro-solid-svg-icons'
+import { far } from '@fortawesome/pro-regular-svg-icons'
+import { fal } from '@fortawesome/pro-light-svg-icons'
+import { fad } from '@fortawesome/pro-duotone-svg-icons'
+
+library.add(fas, far, fal, fad)
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
