@@ -43,17 +43,19 @@ const Rooms = () => {
             </div>
 
 
-            {rooms.map((room, index) => (
-                <div key={index} className="row align-items-center">
-                    <div className="col-3 shadow-right">
-                        <Room key={index} {...room} />
-                    </div>
+            <div className="overflow-x-scroll">
+                {rooms.map((room, index) => (
+                    <div key={index} className="row align-items-center">
+                        <div className="col-3 shadow-right" >
+                            <Room key={index} {...room} />
+                        </div>
 
-                    <div className="col-9">
-                        <RoomSchedule key={index} {...room} selectedDate={selectedDate} />
+                        <div className="col-9">
+                            <RoomSchedule key={index} {...room} selectedDate={selectedDate} />
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     )
 }
