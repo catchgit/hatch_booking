@@ -2,151 +2,210 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useAuthContext } from '../provider/AuthProvider';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+import { format } from 'date-fns';
+import { nb } from 'date-fns/locale';
+import Button from '../components/Button';
 
 const Room = () => {
     const { apiCall } = useAuthContext();
     const { roomId } = useParams();
-    const [timeLeft, setTimeLeft] = useState(0);
-    const [isComplete, setIsComplete] = useState(false);
-    const [events, setEvents] = useState([]);
-    const svgRef = useRef(null);
+    const [events, setEvents] = useState({});
+    const [loaded, setLoaded] = useState(false);
+    const [totalEventDuration, setTotalEventDuration] = useState(0);
+    const [countdownDuration, setCountdownDuration] = useState(0);
 
     const fetchEvents = async () => {
         try {
             const response = await apiCall({
                 action: 'getRoom',
-                email: 'blueroom@catchmedia.no'
+                room: roomId
             });
 
             if (response.status === 200) {
-                console.log(response.data)
-                setEvents(response.data)
+                const eventsData = response.data;
+                setEvents(eventsData);
+                await fetchCurrentEvents();
             }
         } catch (error) {
             console.error('Error fetching events:', error);
+        } finally {
+            setLoaded(true);
         }
     }
+
+    const fetchCurrentEvents = async () => {
+        try {
+            const response = await apiCall({
+                action: 'getCurrentEvent',
+                room: roomId
+            });
+
+            if (response.status === 200) {
+                const eventsData = response.data;
+                const { totalDuration, remainingTime } = getCountdownDuration(eventsData);
+                setCountdownDuration(remainingTime);
+                setTotalEventDuration(totalDuration);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const getCountdownDuration = (events) => {
+        const now = new Date().getTime(); // Current time in milliseconds
+
+        // Iterate through events
+        for (let event of events) {
+            const startTime = new Date(event.start.dateTime).getTime();
+            const endTime = new Date(event.end.dateTime).getTime();
+
+            // Check if the event is currently ongoing
+            if (now >= startTime && now <= endTime) {
+                // Total duration in seconds (properly calculated)
+                const totalDuration = (endTime - startTime) / 1000; // In seconds
+
+                // Remaining time in seconds, ensure it's not negative
+                const remainingTime = Math.max(Math.floor((endTime - now) / 1000), 0); // Remaining time in seconds
+
+                // Return both total and remaining time for countdown
+                return {
+                    totalDuration,
+                    remainingTime,
+                };
+            }
+        }
+
+        // Default return value when no event is ongoing
+        return {
+            totalDuration: 0,
+            remainingTime: 0
+        };
+    };
+
 
     useEffect(() => {
         fetchEvents();
     }, []);
 
-    const getCurrentEvent = () => {
-        const now = new Date();
-        return events.find(event => {
-            const startTime = new Date(event.start);
-            const endTime = new Date(event.end);
-            return now >= startTime && now <= endTime;
-        });
-    };
-
-    useEffect(() => {
-        if (events.length === 0) return;
-
-        const currentEvent = getCurrentEvent();
-
-        if (!currentEvent) {
-            setIsComplete(true);
-            setTimeLeft(0);
-            return;
-        }
-
-        const startTime = new Date(currentEvent.start);
-        const endTime = new Date(currentEvent.end);
-        const totalDuration = endTime - startTime;
-
-        const timer = setInterval(() => {
-            const currentTime = new Date();
-            const difference = endTime - currentTime;
-
-            if (difference <= 0) {
-                setIsComplete(true);
-                setTimeLeft(0);
-                clearInterval(timer);
-                return;
-            }
-
-            setIsComplete(false);
-            setTimeLeft(difference / 1000);
-        }, 16);
-
-        return () => clearInterval(timer);
-    }, [events]);
-
-    // Calculate circumference based on current SVG size
-    const getCircumference = () => {
-        if (!svgRef.current) return 0;
-        const radius = 45; // Using viewBox coordinates
-        return 2 * Math.PI * radius;
-    };
-
-    const circumference = getCircumference();
-    // Calculate progress based on 2 hours (7200 seconds)
-    const offset = circumference - (timeLeft / 7200) * circumference;
-
-    // Format the remaining time
-    const formatTimeLeft = () => {
-        if (timeLeft <= 0) return "00:00:00";
-        const hours = Math.floor(timeLeft / 3600);
-        const minutes = Math.floor((timeLeft % 3600) / 60);
-        const seconds = Math.floor(timeLeft % 60);
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    };
-
-    const currentEvent = getCurrentEvent();
-    const getTimeDisplay = () => {
-        if (!currentEvent) return "Room Available";
-        const start = new Date(currentEvent.start);
-        const end = new Date(currentEvent.end);
-        return `${start.getHours()}:${start.getMinutes().toString().padStart(2, '0')} - ${end.getHours()}:${end.getMinutes().toString().padStart(2, '0')}`;
-    };
+    if (!loaded) return <h1>Laster...</h1>
 
     return (
-        <div className="container-fluid">
-            <h1 className="mb-4">Room {roomId}</h1>
-            <div className="row">
-                <div className="col-md-6 d-flex justify-content-center align-items-center">
-                    <div className="position-relative w-100" style={{ aspectRatio: '1/1' }}>
-                        <svg ref={svgRef} className="position-absolute w-100 h-100" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-                            <circle
-                                cx="50"
-                                cy="50"
-                                r="45"
-                                fill="transparent"
-                                stroke="rgba(255, 255, 255, 0.1)"
-                                strokeWidth="4"
-                            />
-                            <circle
-                                cx="50"
-                                cy="50"
-                                r="45"
-                                fill="transparent"
-                                stroke={isComplete ? "#4CAF50" : "#FF5252"}
-                                strokeWidth="4"
-                                strokeDasharray={circumference}
-                                strokeDashoffset={offset}
-                                style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
-                            />
-                        </svg>
-                        <div className="position-absolute top-50 start-50 translate-middle text-center">
-                            <h2>{currentEvent?.subject}</h2>
-                            <h3 className="m-0" style={{ fontSize: '2.5rem !important' }}>
-                                {currentEvent ? formatTimeLeft() : "Available"}
-                            </h3>
-                            <small className="text-white-50">{getTimeDisplay()}</small>
+        <div className="row align-items-center">
+            <div className="col-lg-6 d-flex align-items-center justify-content-center">
+                <Countdown
+                    totalDuration={totalEventDuration}  // Pass total duration
+                    remainingTime={countdownDuration}  // Pass remaining time
+                />
+            </div>
+
+            <div className="col-lg-6">
+                {Object.keys(events).length > 0 ? (
+                    Object.entries(events).map(([date, items], index) => (
+                        <div key={date} className="mb-4">
+                            <h4 className="text-uppercase small opacity-50 px-4">{date}</h4>
+                            <div className="bg-white-5 p-4 rounded-3">
+                                {items.map((event, idx) => (
+                                    <Event
+                                        key={idx}
+                                        firstItem={index === 0}
+                                        lastItem={idx === items.length - 1}
+                                        {...event}
+                                    />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div className="col-md-6">
-                    {events?.map((event, index) => (
-                        <div key={index}>
-                            <h3>{event.subject}</h3>
-                        </div>
-                    ))}
-                </div>
+                    ))
+                ) : (
+                    <p>Ingen møter</p>
+                )}
             </div>
         </div>
+    )
+}
+
+const Event = (props) => {
+    const { firstItem, lastItem, start, end, subject, organizer } = props;
+
+    return (
+        <div className={!lastItem ? 'mb-4' : ''}>
+            <div className={`d-flex align-items-center gap-2 ${!firstItem ? 'opacity-75' : ''}`}>
+                <span className="fw-medium">{format(start, 'HH:mm')}</span>
+                <FontAwesomeIcon icon={["far", "arrow-right"]} />
+                <span className="fw-medium">{format(end, 'HH:mm')}</span>
+            </div>
+            <h4 className={`mb-1 ${!firstItem ? 'opacity-50' : ''}`}>{organizer.name}</h4>
+            <span className={`fw-light ${!firstItem ? 'opacity-25' : 'opacity-75'}`}>{subject.replace(organizer.name, '')}</span>
+        </div>
+    )
+}
+
+const Countdown = ({ totalDuration, remainingTime }) => {
+    const countdownRef = useRef(null);
+    const [size, setSize] = useState(100);
+
+    useEffect(() => {
+        if (!countdownRef.current) return;
+
+        const observer = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                setSize(entry.contentRect.width); // Set width dynamically
+            }
+        });
+
+        observer.observe(countdownRef.current);
+
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div ref={countdownRef} className="w-100 position-relative">
+            <CountdownCircleTimer
+                isPlaying
+                duration={totalDuration}
+                initialRemainingTime={remainingTime}
+                rotation="counterclockwise"
+                size={size}
+                strokeWidth={17}
+                colors={remainingTime ? 'var(--bs-danger)' : 'var(--bs-success)'}
+                trailColor="rgba(0, 0, 0, .5)"
+            >
+                {({ remainingTime }) => (
+                    <div className="row align-items-center text-center">
+                        <h2 className="fw-bold opacity-75 text-uppercase">{remainingTime ? 'Opptatt' : 'Ledig'}</h2>
+                        {remainingTime ? (
+                            <p>{formatTime(remainingTime)}</p>
+                        ) : (
+                            <div className="d-flex flex-column align-items-center mt-3 mb-5">
+                                <div className="round-add-button p-5">
+                                    <FontAwesomeIcon icon={["far", "plus"]} size="4x" />
+                                </div>
+
+                                <div className="position-absolute bottom-0 mb-5">
+                                    <Button 
+                                        text="Book rom"
+                                        type="white"
+                                        leftIcon="plus"
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                    </div>
+                )
+                }
+            </CountdownCircleTimer >
+        </div >
     );
+};
+
+const formatTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600); // Get hours
+    const minutes = Math.floor((seconds % 3600) / 60); // Get minutes
+    const remainingSeconds = seconds % 60; // Get remaining seconds
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
 export default Room;

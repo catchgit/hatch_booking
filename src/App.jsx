@@ -18,7 +18,7 @@ const App = () => (
 const Main = () => {
 
     return (
-        <div className="container">
+        <div className="container-fluid px-5">
             <Header />
 
             <Outlet />

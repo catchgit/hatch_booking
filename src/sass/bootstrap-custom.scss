@@ -6,9 +6,11 @@
     color.channel($value, "blue", $space: rgb);
 }
 
+$headings-color:             #FFFFFF;
 $headings-font-weight:        500;
 $font-size-base:              1rem;
 
+/* Typography */
 $h1-font-size:                $font-size-base * 2.5;
 $h2-font-size:                $font-size-base * 2.5;
 $h3-font-size:                $font-size-base * 1.75;
@@ -16,10 +18,17 @@ $h4-font-size:                $font-size-base * 1.25;
 $h5-font-size:                $font-size-base * 1;
 $h6-font-size:                $font-size-base * 0.9;
 
+/* Colors */
 $primary:                    #22274E;
 $light:                      rgba(255, 255, 255, .5);
 $danger:                     #CC0043;
+$success:                    #389B4F;
+$dark:                       rgba(0, 0, 0, .5);
 
-$headings-color: #FFFFFF;
+/* Buttons */
+$btn-font-weight:            600;
+$btn-border-radius:          1rem;
+$btn-padding-y:              0.7rem;
+$btn-padding-x:              1.2rem;
 
 @import '../../node_modules/bootstrap/scss/bootstrap';

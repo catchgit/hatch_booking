@@ -38,6 +38,11 @@
     font-style: normal;
 }
 
+:root {
+    --white-5: rgba(255, 255, 255, .05);
+    --white-50: rgba(255, 255, 255, .5);
+}
+
 body {
     background-color: var(--bs-primary) !important;
     font-family: 'AvenirNextLTPro', sans-serif !important;
@@ -45,15 +50,19 @@ body {
     font-size: 16px;
 }
 
+/* Typography */
 h1 {
     font-size: 2rem !important;
     color: #FFFFFF;
 }
 
-
-
 h3 {
     font-size: 1.3rem !important;
+}
+
+/* Text colors */
+.text-white-50 {
+    color: var(--white-50)
 }
 
 /* Background Colors */
@@ -65,8 +74,27 @@ h3 {
     background-color: rgba(255, 255, 255, 0.10);
 }
 
+.bg-white-50 {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.bg-black-50 {
+    background-color: rgba(0, 0, 0, .5);
+}
+
 .border-white-10 {
     border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+/* Buttons */
+.btn-white {
+    background-color: #FFFFFF !important;
+    color: #22274E !important;
+}
+
+.btn-white-5 {
+    background-color: var(--white-5) !important;
+    color: var(--white-50) !important;
 }
 
 /* Shadows */
@@ -147,4 +175,13 @@ h3 {
 .time-slot.booked {
     color: var(--bs-danger);
     background-color: rgba(var(--bs-danger-rgb), 0.25);
+}
+
+/* Room */
+.round-add-button {
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, .5);
 }
