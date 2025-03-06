@@ -39,8 +39,12 @@
 }
 
 :root {
+    --header-height: 88px;
     --white-5: rgba(255, 255, 255, .05);
+    --white-5-hex: #2d3257;
+    --white-25: rgba(255, 255, 255, .25);
     --white-50: rgba(255, 255, 255, .5);
+    --white-75: rgba(255, 255, 255, .75);
 }
 
 body {
@@ -50,19 +54,26 @@ body {
     font-size: 16px;
 }
 
+.custom-vh-100 {
+    height: calc(100vh - var(--header-height));
+}
+
 /* Typography */
 h1 {
-    font-size: 2rem !important;
     color: #FFFFFF;
 }
 
-h3 {
-    font-size: 1.3rem !important;
+.unbreakable {
+    white-space: nowrap;
 }
 
 /* Text colors */
+.text-white-75 {
+    color: var(--white-75);
+}
+
 .text-white-50 {
-    color: var(--white-50)
+    color: var(--white-50);
 }
 
 /* Background Colors */
@@ -167,9 +178,10 @@ h3 {
 
 .time-slot {
     background-color: rgba(255, 255, 255, .05);
-    padding: 1rem 1.5rem;
+    padding: .75rem 1.5rem;
     border-radius: 16px;
     cursor: pointer;
+    margin-right: 0.25rem;
 }
 
 .time-slot.booked {
@@ -184,4 +196,77 @@ h3 {
     place-items: center;
     border-radius: 50%;
     background-color: rgba(0, 0, 0, .5);
+}
+
+.countdown-time {
+    font-size: 5rem;
+}
+
+/* Table */
+.table-wrapper {
+    width: 100%;
+    overflow-x: scroll;
+    position: relative;
+    scrollbar-width: none;
+}
+
+.table-header {
+    position: absolute;
+    top: 1rem;
+    transform: translateX(calc(50% - (50px)));
+    width: 100%;
+    z-index: 3;
+}
+
+table {
+    table-layout: fixed;
+}
+
+thead,
+tr th {
+    position: sticky;
+    padding: 1rem 1.75rem 1rem 1.75rem;
+    border-radius: 16px 0 0 0;
+}
+
+thead {
+    top: 0;
+    z-index: 2;
+}
+
+thead tr>th {
+    padding: 2rem 0;
+}
+
+thead tr>th:first-child {
+    z-index: 3;
+}
+
+tbody tr:last-of-type th {
+    border-radius: 0 0 16px 16px;
+}
+
+tr:not(:last-child) {
+    border-bottom: 1px solid var(--white-25) !important;
+}
+
+tr>th {
+    left: 0;
+    z-index: 1;
+    background-color: var(--white-5-hex);
+}
+
+tr>th::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -30px;
+    width: 30px;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+    pointer-events: none;
+}
+
+tr>td:first-of-type {
+    padding-left: 2rem
 }

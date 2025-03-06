@@ -2,9 +2,12 @@ import { format } from "date-fns";
 import Button from "./Button";
 import { nb } from "date-fns/locale";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const Header = () => {
+const Header = (props) => {
+    const { showTime = true } = props;
     const [currentTime, setCurrentTime] = useState(new Date());
+    const navigate = useNavigate();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -22,12 +25,18 @@ const Header = () => {
             </div>
             <div className="col-auto">
                 <div className="d-flex align-items-center gap-3">
-                    <h4 className="mb-0">{format(currentTime, 'HH:mm')}</h4>
-                    <h4 className="mb-0 fw-light text-white-50 text-capitalize">{format(currentTime, 'EEEE d. MMMM yyyy', { locale: nb })}</h4>
+                    {showTime ? (
+                        <>
+                            <h4 className="mb-0">{format(currentTime, 'HH:mm')}</h4>
+                            <h4 className="mb-0 fw-light text-white-50 text-capitalize">{format(currentTime, 'EEEE d. MMMM yyyy', { locale: nb })}</h4>
+                        </>
+                    ) : null}
+
                     <Button
                         text="Alle rom"
                         type="white-5"
                         leftIcon="calendars"
+                        onClick={() => navigate('/')}
                     />
                 </div>
             </div>

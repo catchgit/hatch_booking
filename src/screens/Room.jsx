@@ -12,6 +12,7 @@ const Room = () => {
     const { apiCall } = useAuthContext();
     const { roomId } = useParams();
     const [events, setEvents] = useState({});
+    const [currentEvent, setCurrentEvent] = useState(null);
     const [loaded, setLoaded] = useState(false);
     const [totalEventDuration, setTotalEventDuration] = useState(0);
     const [countdownDuration, setCountdownDuration] = useState(0);
@@ -44,6 +45,7 @@ const Room = () => {
 
             if (response.status === 200) {
                 const eventsData = response.data;
+                setCurrentEvent(eventsData[0])
                 const { totalDuration, remainingTime } = getCountdownDuration(eventsData);
                 setCountdownDuration(remainingTime);
                 setTotalEventDuration(totalDuration);
@@ -92,15 +94,16 @@ const Room = () => {
     if (!loaded) return <h1>Laster...</h1>
 
     return (
-        <div className="row align-items-center">
-            <div className="col-lg-6 d-flex align-items-center justify-content-center">
+        <div className="row align-items-center gx-5 custom-vh-100 overflow-hidden">
+            <div className="col-lg-6 d-flex align-items-center justify-content-center custom-vh-100">
                 <Countdown
-                    totalDuration={totalEventDuration}  // Pass total duration
-                    remainingTime={countdownDuration}  // Pass remaining time
+                    totalDuration={totalEventDuration}
+                    remainingTime={countdownDuration}
+                    currentEvent={currentEvent}
                 />
             </div>
 
-            <div className="col-lg-6">
+            <div className="col-lg-6 custom-vh-100 overflow-auto">
                 {Object.keys(events).length > 0 ? (
                     Object.entries(events).map(([date, items], index) => (
                         <div key={date} className="mb-4">
@@ -122,6 +125,7 @@ const Room = () => {
                 )}
             </div>
         </div>
+
     )
 }
 
@@ -141,7 +145,7 @@ const Event = (props) => {
     )
 }
 
-const Countdown = ({ totalDuration, remainingTime }) => {
+const Countdown = ({ totalDuration, remainingTime, currentEvent }) => {
     const countdownRef = useRef(null);
     const [size, setSize] = useState(100);
 
@@ -150,7 +154,7 @@ const Countdown = ({ totalDuration, remainingTime }) => {
 
         const observer = new ResizeObserver(entries => {
             for (let entry of entries) {
-                setSize(entry.contentRect.width); // Set width dynamically
+                setSize(entry.contentRect.width);
             }
         });
 
@@ -159,23 +163,29 @@ const Countdown = ({ totalDuration, remainingTime }) => {
         return () => observer.disconnect();
     }, []);
 
+    console.log(currentEvent)
+
     return (
-        <div ref={countdownRef} className="w-100 position-relative">
+        <div ref={countdownRef} className="w-100 position-relative d-flex justify-content-center">
             <CountdownCircleTimer
                 isPlaying
                 duration={totalDuration}
                 initialRemainingTime={remainingTime}
                 rotation="counterclockwise"
-                size={size}
+                size={size > 800 ? 800 : size}
                 strokeWidth={17}
                 colors={remainingTime ? 'var(--bs-danger)' : 'var(--bs-success)'}
                 trailColor="rgba(0, 0, 0, .5)"
             >
                 {({ remainingTime }) => (
                     <div className="row align-items-center text-center">
-                        <h2 className="fw-bold opacity-75 text-uppercase">{remainingTime ? 'Opptatt' : 'Ledig'}</h2>
+                        <h1 className="fw-bold opacity-75 text-uppercase">{remainingTime ? 'Opptatt' : 'Ledig'}</h1>
                         {remainingTime ? (
-                            <p>{formatTime(remainingTime)}</p>
+                            <>
+                                <span className="countdown-time fw-semibold">{formatTime(remainingTime)}</span>
+                                <h3>{currentEvent.organizer?.emailAddress?.name}</h3>
+                                <h4 className="fw-light text-white-75">{currentEvent.subject.replace(currentEvent.organizer?.emailAddress?.name, '')}</h4>
+                            </>
                         ) : (
                             <div className="d-flex flex-column align-items-center mt-3 mb-5">
                                 <div className="round-add-button p-5">
@@ -183,7 +193,7 @@ const Countdown = ({ totalDuration, remainingTime }) => {
                                 </div>
 
                                 <div className="position-absolute bottom-0 mb-5">
-                                    <Button 
+                                    <Button
                                         text="Book rom"
                                         type="white"
                                         leftIcon="plus"
