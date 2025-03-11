@@ -6,7 +6,8 @@ import { format, addDays, subDays } from "date-fns";
 import { FreeMode } from 'swiper/modules';
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import nb from "date-fns/locale/nb";
-
+import { useConfigProvider } from "../provider/ConfigProvider";
+import { useNavigate } from "react-router-dom";
 const Rooms = () => {
     const { apiCall } = useAuthContext();
     const [rooms, setRooms] = useState(null);
@@ -42,6 +43,9 @@ const Rooms = () => {
 }
 
 const Table = ({ selectedDate, setSelectedDate, rooms }) => {
+    const { updateSelectedRoom } = useConfigProvider();
+    const navigate = useNavigate();
+
     const generateTimeSlots = () => {
         let slots = [];
         let start = new Date(selectedDate); // Use selectedDate
@@ -122,6 +126,11 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
         document.addEventListener('mouseup', handleMouseUp);
     };
 
+    const handleRoomClick = (room) => {
+        updateSelectedRoom(room.name, room.email);
+        navigate(`/${room.email}`);
+    }
+
     return (
         <div className="position-relative overflow-hidden">
             <div className="table-header">
@@ -145,7 +154,9 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
                             <tr key={index}>
                                 <th>
                                     <div className="d-flex align-items-center justify-content-between">
-                                        <h4 className="text-decoration-underline unbreakable mb-0">{room.name}</h4>
+                                        <a href="#" className="text-decoration-underline unbreakable mb-0" onClick={() => handleRoomClick(room)}>
+                                            <h4 className="text-decoration-underline unbreakable mb-0">{room.name}</h4>
+                                        </a>
                                         <div className="room-plus-box ms-5">
                                             <FontAwesomeIcon icon={["far", "plus"]} />
                                         </div>
@@ -166,17 +177,24 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
                                                 overlay={
                                                     <Popover className="bg-primary rounded-4 p-3">
                                                         {booked ? (
-                                                            <>
-                                                                <span className="h5 opacity-75 fw-normal">{format(new Date(event.start), "HH:mm")} - {format(new Date(event.end), "HH:mm")}</span>
-                                                                <h4 className="mt-1">{event.organizer?.name}</h4>
-                                                                <p className="opacity-50">{event.subject}</p>
-                                                            </>
+                                                            <div className="calender-popover">
+                                                                <span className="h5 opacity-75 fw-medium">{format(new Date(event.start), "HH:mm")} <FontAwesomeIcon icon={["far", "arrow-right-long"]} /> {format(new Date(event.end), "HH:mm")}</span>
+                                                                <h4 className="mb-1">{event.organizer?.name}</h4>
+                                                                <div className="d-flex justify-content-between align-items-center">
+                                                                    <span className="h5 opacity-50 fw-normal mb-0 me-3">{event.subject.replace(event.organizer?.name, '').trim()}</span>
+                                                                    <FontAwesomeIcon icon={["far", "pen-to-square"]} size="lg" />
+                                                                </div>
+
+                                                            </div>
                                                         ) : (
-                                                            <>
-                                                                <span className="h5 opacity-75 fw-normal">{time} - {nextAvailable}</span>
-                                                                <h4 className="mt-1">Ledig</h4>
-                                                                <p className="opacity-50">Book rom</p>
-                                                            </>
+                                                            <div className="calender-popover">
+                                                                <span className="h5 opacity-75 fw-medium">{time} <FontAwesomeIcon icon={["far", "arrow-right-long"]} /> {nextAvailable}</span>
+                                                                <h4 className="mb-1">Ledig</h4>
+                                                                <div className="d-flex justify-content-between align-items-center">
+                                                                    <span className="h5 opacity-50 fw-normal mb-0 me-3">Book rom</span>
+                                                                    <FontAwesomeIcon icon={["far", "pen-to-square"]} size="lg" />
+                                                                </div>
+                                                            </div>
                                                         )}
                                                     </Popover>
                                                 }

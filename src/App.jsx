@@ -1,4 +1,4 @@
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
 import Rooms from './screens/Rooms';
 import Header from './components/Header';
@@ -16,11 +16,18 @@ const App = () => (
 );
 
 const Main = () => {
+    const location = useLocation();
+    
+    // Determine which routes should show the time
+    const shouldShowTime = () => {
+        // Add routes where you want to hide the time
+        const routesWithoutTime = ['/', '/another-route'];
+        return !routesWithoutTime.includes(location.pathname);
+    };
 
     return (
         <div className="container-fluid px-5">
-            <Header />
-
+            <Header showTime={shouldShowTime()} />
             <Outlet />
         </div>
     )

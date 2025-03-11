@@ -108,6 +108,11 @@ h1 {
     color: var(--white-50) !important;
 }
 
+.btn-white-25 {
+    background-color: var(--white-50) !important;
+    color: #FFFFFF !important;
+}
+
 /* Shadows */
 .shadow-right {
     position: relative;
@@ -175,7 +180,6 @@ h1 {
     border-bottom: none;
 }
 
-
 .time-slot {
     background-color: rgba(255, 255, 255, .05);
     padding: .75rem 1.5rem;
@@ -187,6 +191,10 @@ h1 {
 .time-slot.booked {
     color: var(--bs-danger);
     background-color: rgba(var(--bs-danger-rgb), 0.25);
+}
+
+.calender-popover {
+    min-width: 175px;
 }
 
 /* Room */
