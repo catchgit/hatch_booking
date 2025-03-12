@@ -18,7 +18,7 @@ function TestMicrosoftGraph() {
 
   const clientID = ""// Insert client ID here
   const tenantID = ""// Insert Tenant ID here
-  const clientSecret ="" // Insert secret key here
+  const clientSecret = "" // Insert secret key here
 
   const getAccessToken = async () => {
     try {

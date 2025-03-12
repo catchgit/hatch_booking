@@ -31,16 +31,22 @@ const Rooms = () => {
         <div className="bg-white-5 rounded-4">
             <div className="row align-items-center py-4">
                 <div className="col-3 shadow-right"></div>
-                <div className="col-9 text-center">
-                    <button onClick={() => setSelectedDate(subDays(selectedDate, 1))} className="btn text-light opacity-50">
-                        <FontAwesomeIcon icon={["far", "chevron-left"]} />
-                    </button>
-                    <h3 className="d-inline mx-3">{format(selectedDate, "EEEE d. MMMM yyyy")}</h3>
-                    <button onClick={() => setSelectedDate(addDays(selectedDate, 1))} className="btn text-light opacity-50">
-                        <FontAwesomeIcon icon={["far", "chevron-right"]} />
-                    </button>
+                    <div className="col-9 text-center d-flex justify-content-center align-items-center">
+                        <button onClick={() => setSelectedDate(subDays(selectedDate, 1))} className="btn text-light opacity-50">
+                            <FontAwesomeIcon icon={["far", "chevron-left"]} />
+                        </button>
+
+                        <div className="mx-3 d-flex justify-content-center align-items-center" style={{ width: "275px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            <h3 className="text-center m-0" style={{ margin: 0 }}>
+                                {format(selectedDate, "EEEE d. MMMM yyyy")}
+                            </h3>
+                        </div>
+
+                        <button onClick={() => setSelectedDate(addDays(selectedDate, 1))} className="btn text-light opacity-50">
+                            <FontAwesomeIcon icon={["far", "chevron-right"]} />
+                        </button>
+                    </div>
                 </div>
-            </div>
 
 
             <div className="overflow-x-scroll">
