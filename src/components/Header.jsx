@@ -22,7 +22,7 @@ const Header = (props) => {
     }, []);
 
     return (
-        <div className="row py-4">
+        <div className="row py-3">
             <div className="col">
                 <h1 className="text-white">{selectedRoom?.name ?? "Velg rom"}</h1>
             </div>

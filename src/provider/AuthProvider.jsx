@@ -58,7 +58,7 @@ const AuthProvider = ({ children }) => {
                 try {
                     const response = await axios({
                         method: 'post',
-                        url: import.meta.env.VITE_API,
+                        url: `${import.meta.env.VITE_API}?action=${data.action}`,
                         data: {
                             token: accessToken,
                             ...data

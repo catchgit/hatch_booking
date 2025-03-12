@@ -126,7 +126,8 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
         document.addEventListener('mouseup', handleMouseUp);
     };
 
-    const handleRoomClick = (room) => {
+    const handleRoomClick = (room, e) => {
+        e.preventDefault();
         updateSelectedRoom(room.name, room.email);
         navigate(`/${room.email}`);
     }
@@ -154,7 +155,7 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
                             <tr key={index}>
                                 <th>
                                     <div className="d-flex align-items-center justify-content-between">
-                                        <a href="#" className="text-decoration-underline unbreakable mb-0" onClick={() => handleRoomClick(room)}>
+                                        <a href="#" className="text-decoration-underline unbreakable mb-0" onClick={(e) => handleRoomClick(room, e)}>
                                             <h4 className="text-decoration-underline unbreakable mb-0">{room.name}</h4>
                                         </a>
                                         <div className="room-plus-box ms-5">

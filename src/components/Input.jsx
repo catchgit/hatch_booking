@@ -1,5 +1,5 @@
 const Input = (props) => {
-    const { value, onChange, type = 'text', col = 'col-12', name, label, autoComplete, onBlur } = props;
+    const { value, onChange, type = 'text', col = 'col-12', name, label, autoComplete, onBlur, placeholder } = props;
 
     const handleChange = (e) => {
         onChange(e.target.value);
@@ -7,7 +7,7 @@ const Input = (props) => {
 
     return (
         <div className={col}>
-            <div className="form-floating">
+            <div className="input-group">
                 <input
                     value={value}
                     onChange={handleChange}
@@ -15,10 +15,9 @@ const Input = (props) => {
                     type={type}
                     className={`form-control`}
                     id={name}
-                    placeholder="ddwadw"
+                    placeholder={placeholder}
                     autoComplete={autoComplete}
                 />
-                <label htmlFor={name}>{label}</label>
             </div>
         </div>
     )

@@ -58,6 +58,14 @@ body {
     height: calc(100vh - var(--header-height));
 }
 
+.custom-vh-95 {
+    height: calc(95vh - var(--header-height));
+}
+
+.custom-vh-90 {
+    height: calc(90vh - var(--header-height));
+}
+
 /* Typography */
 h1 {
     color: #FFFFFF;
@@ -208,6 +216,15 @@ h1 {
 
 .countdown-time {
     font-size: 5rem;
+}
+
+/* Booking */
+.booking-user {
+    cursor: pointer;
+}
+
+.booking-user:hover {
+    background-color: var(--white-5);
 }
 
 /* Table */

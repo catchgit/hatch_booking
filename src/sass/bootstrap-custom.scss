@@ -29,6 +29,21 @@ $dark:                       rgba(0, 0, 0, .5);
 $btn-font-weight:            600;
 $btn-border-radius:          1rem;
 $btn-padding-y:              0.7rem;
-$btn-padding-x:              1.2rem;
+$btn-padding-x:              1.5rem;
+$btn-disabled-border-color:  transparent;
+
+/* Input */
+$input-padding-y:             0.7rem;
+$input-padding-x:             1.2rem;
+$input-bg:                    var(--white-5-hex);
+$input-border-width:          0;
+$input-color:                 #FFFFFF;
+$input-placeholder-color:     rgba(255, 255, 255, .5);
+$input-focus-bg:              var(--white-5-hex);
+$input-focus-border-color:    transparent;
+$input-focus-color:           #FFFFFF;
+$input-focus-box-shadow:      none;
+$input-border-radius:         1rem 1rem 1rem 1rem;
+
 
 @import '../../node_modules/bootstrap/scss/bootstrap';

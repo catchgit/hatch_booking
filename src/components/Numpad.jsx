@@ -20,7 +20,7 @@ const Numpad = (props) => {
     };
 
     return (
-        <div className="d-flex flex-column align-items-center mt-5">
+        <div className="d-flex flex-column align-items-center">
             <div className="d-flex gap-2">
                 {Array.from({ length }, (_, i) => (
                     <span
