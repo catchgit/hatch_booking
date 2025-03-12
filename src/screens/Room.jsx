@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useAuthContext } from '../provider/AuthProvider';
@@ -10,7 +10,7 @@ import Button from '../components/Button';
 
 const Room = () => {
     const { apiCall } = useAuthContext();
-    const { roomId } = useParams();
+    const { roomEmail } = useParams();
     const [events, setEvents] = useState({});
     const [currentEvent, setCurrentEvent] = useState(null);
     const [loaded, setLoaded] = useState(false);
@@ -21,7 +21,7 @@ const Room = () => {
         try {
             const response = await apiCall({
                 action: 'getRoom',
-                room: roomId
+                room: roomEmail
             });
 
             if (response.status === 200) {
@@ -40,7 +40,7 @@ const Room = () => {
         try {
             const response = await apiCall({
                 action: 'getCurrentEvent',
-                room: roomId
+                room: roomEmail
             });
 
             if (response.status === 200) {
@@ -146,6 +146,8 @@ const Event = (props) => {
 }
 
 const Countdown = ({ totalDuration, remainingTime, currentEvent }) => {
+    const navigate = useNavigate();
+    const params = useParams();
     const countdownRef = useRef(null);
     const [size, setSize] = useState(100);
 
@@ -162,8 +164,6 @@ const Countdown = ({ totalDuration, remainingTime, currentEvent }) => {
 
         return () => observer.disconnect();
     }, []);
-
-    console.log(currentEvent)
 
     return (
         <div ref={countdownRef} className="w-100 position-relative d-flex justify-content-center">
@@ -197,6 +197,7 @@ const Countdown = ({ totalDuration, remainingTime, currentEvent }) => {
                                         text="Book rom"
                                         type="white"
                                         leftIcon="plus"
+                                        onClick={() => navigate(`/${params.roomEmail}/booking`)}
                                     />
                                 </div>
                             </div>
