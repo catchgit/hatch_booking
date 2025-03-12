@@ -138,11 +138,7 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
                 <button onClick={() => setSelectedDate(subDays(selectedDate, 1))} className="btn text-light opacity-50">
                     <FontAwesomeIcon icon={["far", "chevron-left"]} />
                 </button>
-                <div className="mx-3 d-flex justify-content-center align-items-center" style={{ width: "275px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    <h3 className="text-center m-0" style={{ margin: 0 }}>
-                        {format(selectedDate, "EEEE d. MMMM yyyy")}
-                    </h3>
-                </div>
+                <h4 className="d-inline mx-1">{format(selectedDate, "EEEE d. MMMM yyyy", { locale: nb })}</h4>
                 <button onClick={() => setSelectedDate(addDays(selectedDate, 1))} className="btn text-light opacity-50">
                     <FontAwesomeIcon icon={["far", "chevron-right"]} />
                 </button>
