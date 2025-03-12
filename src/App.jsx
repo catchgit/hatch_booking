@@ -1,6 +1,7 @@
 import { BrowserRouter, Outlet, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import './App.css';
 import Rooms from './screens/Rooms';
+import Admin from './screens/Admin';
 import Header from './components/Header';
 import Room from './screens/Room';
 import { BookingContainer, BookingDetails, EnterPin, SelectUser } from './screens/Booking';
