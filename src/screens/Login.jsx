@@ -38,7 +38,7 @@ const Login = () => {
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="col-lg-7 text-center">
-                        <h1>{t('enter_pin')}</h1>
+                        <h1 className="mb-5">{t('enter_pin')}</h1>
 
                         <AnimatePresence mode="wait">
                             {showNumpad && (

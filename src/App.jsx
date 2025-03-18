@@ -23,6 +23,8 @@ const App = () => (
                     <Route path="enter-pin" element={<EnterPin />} />
                     <Route path="details" element={<BookingDetails />} />
                 </Route>
+
+                <Route path="admin" element={<Admin />} />
             </Route>
         </Routes>
     </BrowserRouter>
