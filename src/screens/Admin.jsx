@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import Button from "../components/Button"; // Import the Button component
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faPlus } from "@fortawesome/free-solid-svg-icons";
+import UserDetail from "../components/UserDetail"; // Import the new UserDetail component
 
 const Tabs = () => {
-    // Track selected tab: 'leietakere' or 'bookinger'
     const [selectedTab, setSelectedTab] = useState("leietakere");
+    const [selectedUser, setSelectedUser] = useState(null); // Track the selected user
 
     const users = [
         { name: "Ola Nordmann", email: "ola.nordmann@example.com" },
@@ -18,51 +19,78 @@ const Tabs = () => {
         setSelectedTab(tab);
     };
 
-    const handleUserClick = (userName) => {
-        alert(`You clicked on ${userName}`);
+    const handleUserClick = (user) => {
+        setSelectedUser(user);
+        setSelectedTab("userDetails"); // Switch to the user details tab
     };
 
-    // Sidebar Component (Left Tab Buttons)
+    const handleSaveUser = (updatedUser) => {
+        // Update the users array or handle save logic here
+        console.log("Updated user:", updatedUser);
+        setSelectedUser(updatedUser);
+        setSelectedTab("leietakere"); // Optionally switch back to the "leietakere" tab after saving
+    };
+
     const Sidebar = () => {
         return (
-            <div className="col-3 d-flex flex-column p-3" style={{ backgroundColor: "#ffffff", borderRadius: "8px", boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)" }}>
+            <div className="col-3 d-flex flex-column p-2 gap-3" style={{ backgroundColor: "#ffffff", borderRadius: "8px", boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)" }}>
                 <Button
-                    text="Leietakere"
-                    type={selectedTab === "leietakere" ? "purple" : "outline-dark"}
+                    text={(
+                        <div className="d-flex justify-content-between align-items-center w-100">
+                            <span className="text-start">Leietakere</span>
+                            <FontAwesomeIcon icon={faChevronRight} />
+                        </div>
+                    )}
+                    className="w-100 text-start"
+                    style={{ padding: "20px", fontSize: "1.2rem" }}
                     onClick={() => handleTabClick("leietakere")}
                 />
                 <Button
-                    text="Bookinger"
-                    type={selectedTab === "bookinger" ? "purple" : "outline-dark"}
+                    text={(
+                        <div className="d-flex justify-content-between align-items-center w-100">
+                            <span className="text-start">Bookinger</span>
+                            <FontAwesomeIcon icon={faChevronRight} />
+                        </div>
+                    )}
+                    className="w-100 text-start"
+                    style={{ padding: "20px", fontSize: "1.2rem" }}
                     onClick={() => handleTabClick("bookinger")}
                 />
             </div>
         );
     };
 
-    // Add Button Component
     const AddButton = () => {
         return (
             <div className="d-flex justify-content-end mb-3">
                 <Button
-                    text="Legg til"
+                    text={(
+                        <>
+                            <FontAwesomeIcon icon={faPlus} className="me-2" />
+                            Legg til
+                        </>
+                    )}
                     type="primary"
                     onClick={() => alert("Add Button Clicked")}
+                    style={{ padding: "10px 10px", fontSize: "1.2rem" }}
                 />
             </div>
         );
     };
 
-    // User List Component (for Leietakere)
     const UserList = () => {
         return (
             <div className="list-group">
                 {users.map((user, index) => (
-                    <div key={index} className="list-group-item d-flex justify-content-between align-items-center mb-3 py-3" style={{ backgroundColor: "#ffffff", borderRadius: "8px", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)" }}>
+                    <div
+                        key={index}
+                        className="list-group-item d-flex justify-content-between align-items-center mb-3 py-3"
+                        style={{ backgroundColor: "#ffffff", borderRadius: "8px", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)" }}
+                    >
                         <h4
                             className="m-0 text-primary"
                             style={{ textDecoration: "underline", cursor: "pointer" }}
-                            onClick={() => handleUserClick(user.name)}
+                            onClick={() => handleUserClick(user)}
                         >
                             {user.name}
                         </h4>
@@ -75,19 +103,19 @@ const Tabs = () => {
         );
     };
 
-    // Tab Content Component
     const TabContent = () => {
         return (
             <div className="col-9 p-5" style={{ backgroundColor: "#ffffff", borderRadius: "8px", boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)" }}>
-                {/* Conditionally render the AddButton for Leietakere only */}
                 {selectedTab === "leietakere" && <AddButton />}
-
                 {selectedTab === "leietakere" && <UserList />}
                 {selectedTab === "bookinger" && (
                     <div>
                         <h4 style={{ color: "#000000" }}>Hello World from Bookinger!</h4>
                         <p>This section will display booking details when "Bookinger" is selected.</p>
                     </div>
+                )}
+                {selectedTab === "userDetails" && selectedUser && (
+                    <UserDetail user={selectedUser} onSave={handleSaveUser} />
                 )}
             </div>
         );

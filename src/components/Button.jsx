@@ -5,6 +5,8 @@ const Button = (props) => {
         text,
         type = 'primary',
         onClick,
+        className = '',
+        style = {},
         disabled,
         classes,
         leftIcon,
@@ -24,7 +26,9 @@ const Button = (props) => {
             type="submit"
             onClick={disabled ? undefined : handleClick}
             disabled={disabled}
+            style={style}
         >
+            
             {leftIcon ? (
                 loading ? (
                     <span className="spinner-border spinner-border-sm ms-2" aria-hidden="true"></span>

@@ -12,7 +12,7 @@ const App = () => (
         <Routes>
             <Route path="/" element={<Main />}>
                 {/* Overview of all rooms */}
-                <Route index element={<Rooms />} />
+                <Route index element={<Admin />} />
 
                 {/* Individual room routes */}
                 <Route path=":roomEmail" element={<ProtectedRoute><Room /></ProtectedRoute>} />
