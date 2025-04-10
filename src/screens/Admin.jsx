@@ -7,13 +7,12 @@ import UserDetail from "../components/UserDetail"; // Import the new UserDetail 
 const Tabs = () => {
     const [selectedTab, setSelectedTab] = useState("leietakere");
     const [selectedUser, setSelectedUser] = useState(null); // Track the selected user
-
-    const users = [
+    const [users, setUsers] = useState([
         { name: "Ola Nordmann", email: "ola.nordmann@example.com" },
         { name: "Kari Nordmann", email: "kari.nordmann@example.com" },
         { name: "Per Hansen", email: "per.hansen@example.com" },
         { name: "Lise Johansen", email: "lise.johansen@example.com" }
-    ];
+    ]);
 
     const handleTabClick = (tab) => {
         setSelectedTab(tab);
@@ -25,10 +24,43 @@ const Tabs = () => {
     };
 
     const handleSaveUser = (updatedUser) => {
-        // Update the users array or handle save logic here
-        console.log("Updated user:", updatedUser);
-        setSelectedUser(updatedUser);
-        setSelectedTab("leietakere"); // Optionally switch back to the "leietakere" tab after saving
+        if (updatedUser.email && updatedUser.name) { // Ensure that both name and email are not empty
+            if (updatedUser.email === "" || updatedUser.name === "") {
+                alert("Both Name and Email are required.");
+                return;
+            }
+
+            // Check if the user already exists
+            const userExists = users.some((user) => user.email === updatedUser.email);
+
+            if (!userExists) {
+                // Add the new user to the list
+                setUsers((prevUsers) => [...prevUsers, updatedUser]);
+            } else {
+                // Update the existing user
+                const updatedUsers = users.map((user) =>
+                    user.email === updatedUser.email ? updatedUser : user
+                );
+                setUsers(updatedUsers);
+            }
+
+            setSelectedUser(null); // Reset the selected user
+            setSelectedTab("leietakere"); // Switch back to the "leietakere" tab
+        }
+    };
+
+
+    const handleAddUser = () => {
+        const emptyUser = { name: "", email: "", pin: "" };
+        setSelectedUser(emptyUser); // Initialize with empty fields for a new user
+        setSelectedTab("userDetails");
+    };
+
+    const handleDeleteUser = (userToDelete) => {
+        const filteredUsers = users.filter((u) => u.email !== userToDelete.email);
+        setUsers(filteredUsers);
+        setSelectedUser(null);
+        setSelectedTab("leietakere");
     };
 
     const Sidebar = () => {
@@ -71,14 +103,14 @@ const Tabs = () => {
                         </>
                     )}
                     type="primary"
-                    onClick={() => alert("Add Button Clicked")}
+                    onClick={handleAddUser}
                     style={{ padding: "10px 10px", fontSize: "1.2rem" }}
                 />
             </div>
         );
     };
 
-    const UserList = () => {
+    const UserList = ({ users, onUserClick }) => {
         return (
             <div className="list-group">
                 {users.map((user, index) => (
@@ -86,12 +118,9 @@ const Tabs = () => {
                         key={index}
                         className="list-group-item d-flex justify-content-between align-items-center mb-3 py-3"
                         style={{ backgroundColor: "#ffffff", borderRadius: "8px", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)" }}
+                        onClick={() => onUserClick(user)} // Handle user click
                     >
-                        <h4
-                            className="m-0 text-primary"
-                            style={{ textDecoration: "underline", cursor: "pointer" }}
-                            onClick={() => handleUserClick(user)}
-                        >
+                        <h4 className="m-0 text-primary" style={{ textDecoration: "underline", cursor: "pointer" }}>
                             {user.name}
                         </h4>
                         <span className="text-muted fs-6" style={{ opacity: 0.6 }}>
@@ -107,7 +136,7 @@ const Tabs = () => {
         return (
             <div className="col-9 p-5" style={{ backgroundColor: "#ffffff", borderRadius: "8px", boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)" }}>
                 {selectedTab === "leietakere" && <AddButton />}
-                {selectedTab === "leietakere" && <UserList />}
+                {selectedTab === "leietakere" && <UserList users={users} onUserClick={handleUserClick} />}
                 {selectedTab === "bookinger" && (
                     <div>
                         <h4 style={{ color: "#000000" }}>Hello World from Bookinger!</h4>
@@ -115,7 +144,7 @@ const Tabs = () => {
                     </div>
                 )}
                 {selectedTab === "userDetails" && selectedUser && (
-                    <UserDetail user={selectedUser} onSave={handleSaveUser} />
+                    <UserDetail user={selectedUser} onSave={handleSaveUser} onClose={() => setSelectedTab("leietakere")} onDelete={handleDeleteUser} />
                 )}
             </div>
         );
