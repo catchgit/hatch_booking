@@ -144,19 +144,21 @@ const UserDetail = ({ user, onSave, onClose, onDelete }) => {
             <hr />
 
             {/* Calendar Header */}
-            <div className="d-flex align-items-center justify-content-between mb-2" style={{ maxWidth: "100%" }}>
+            <div className="d-flex justify-content-center align-items-center mb-2" style={{ maxWidth: "100%" }}>
                 <button
                     className="btn btn-outline-secondary btn-sm"
                     onClick={() => setStartDayOffset((prev) => prev - 4)}
+                    style={{ marginRight: "10px" }}
                 >
                     <FontAwesomeIcon icon={faChevronLeft} />
                 </button>
-                <h6 className="m-0 text-center" style={{ flexGrow: 1 }}>
+                <h6 className="m-0" style={{ fontWeight: "bold", color: "#6f42c1" }}>
                     {getCurrentMonthTitle()}
                 </h6>
                 <button
                     className="btn btn-outline-secondary btn-sm"
                     onClick={() => setStartDayOffset((prev) => prev + 4)}
+                    style={{ marginLeft: "10px" }}
                 >
                     <FontAwesomeIcon icon={faChevronRight} />
                 </button>
