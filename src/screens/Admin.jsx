@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import Button from "../components/Button"; // Import the Button component
+import Button from "../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faPlus } from "@fortawesome/free-solid-svg-icons";
-import UserDetail from "../components/UserDetail"; // Import the new UserDetail component
+import UserDetail from "../components/UserDetail";
+import UserBooking from "../components/UserBooking"; // Import the new UserBookingCalendar
 import { users as initialUsers } from "../components/data";
 
 const Tabs = () => {
     const [selectedTab, setSelectedTab] = useState("leietakere");
-    const [selectedUser, setSelectedUser] = useState(null); // Track the selected user
+    const [selectedUser, setSelectedUser] = useState(null);
     const [users, setUsers] = useState(initialUsers);
 
     const handleTabClick = (tab) => {
@@ -20,35 +21,26 @@ const Tabs = () => {
     };
 
     const handleSaveUser = (updatedUser) => {
-        if (updatedUser.email && updatedUser.name) { // Ensure that both name and email are not empty
-            if (updatedUser.email === "" || updatedUser.name === "") {
-                alert("Both Name and Email are required.");
-                return;
-            }
-
-            // Check if the user already exists
+        if (updatedUser.email && updatedUser.name) {
             const userExists = users.some((user) => user.email === updatedUser.email);
 
             if (!userExists) {
-                // Add the new user to the list
                 setUsers((prevUsers) => [...prevUsers, updatedUser]);
             } else {
-                // Update the existing user
                 const updatedUsers = users.map((user) =>
                     user.email === updatedUser.email ? updatedUser : user
                 );
                 setUsers(updatedUsers);
             }
 
-            setSelectedUser(null); // Reset the selected user
-            setSelectedTab("leietakere"); // Switch back to the "leietakere" tab
+            setSelectedUser(null);
+            setSelectedTab("leietakere");
         }
     };
 
-
     const handleAddUser = () => {
         const emptyUser = { name: "", email: "", pin: "" };
-        setSelectedUser(emptyUser); // Initialize with empty fields for a new user
+        setSelectedUser(emptyUser);
         setSelectedTab("userDetails");
     };
 
@@ -63,23 +55,13 @@ const Tabs = () => {
         return (
             <div className="col-3 d-flex flex-column p-2 gap-3" style={{ backgroundColor: "#ffffff", borderRadius: "8px", boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)" }}>
                 <Button
-                    text={(
-                        <div className="d-flex justify-content-between align-items-center w-100">
-                            <span className="text-start">Leietakere</span>
-                            <FontAwesomeIcon icon={faChevronRight} />
-                        </div>
-                    )}
+                    text={<div className="d-flex justify-content-between align-items-center w-100"><span className="text-start">Leietakere</span><FontAwesomeIcon icon={faChevronRight} /></div>}
                     className="w-100 text-start"
                     style={{ padding: "20px", fontSize: "1.2rem" }}
                     onClick={() => handleTabClick("leietakere")}
                 />
                 <Button
-                    text={(
-                        <div className="d-flex justify-content-between align-items-center w-100">
-                            <span className="text-start">Bookinger</span>
-                            <FontAwesomeIcon icon={faChevronRight} />
-                        </div>
-                    )}
+                    text={<div className="d-flex justify-content-between align-items-center w-100"><span className="text-start">Bookinger</span><FontAwesomeIcon icon={faChevronRight} /></div>}
                     className="w-100 text-start"
                     style={{ padding: "20px", fontSize: "1.2rem" }}
                     onClick={() => handleTabClick("bookinger")}
@@ -114,7 +96,7 @@ const Tabs = () => {
                         key={index}
                         className="list-group-item d-flex justify-content-between align-items-center mb-3 py-3"
                         style={{ backgroundColor: "#ffffff", borderRadius: "8px", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)" }}
-                        onClick={() => onUserClick(user)} // Handle user click
+                        onClick={() => onUserClick(user)}
                     >
                         <h4 className="m-0 text-primary" style={{ textDecoration: "underline", cursor: "pointer" }}>
                             {user.name}
@@ -134,10 +116,7 @@ const Tabs = () => {
                 {selectedTab === "leietakere" && <AddButton />}
                 {selectedTab === "leietakere" && <UserList users={users} onUserClick={handleUserClick} />}
                 {selectedTab === "bookinger" && (
-                    <div>
-                        <h4 style={{ color: "#000000" }}>Hello World from Bookinger!</h4>
-                        <p>This section will display booking details when "Bookinger" is selected.</p>
-                    </div>
+                    <UserBooking users={users} />  // Pass the 'users' state here
                 )}
                 {selectedTab === "userDetails" && selectedUser && (
                     <UserDetail user={selectedUser} onSave={handleSaveUser} onClose={() => setSelectedTab("leietakere")} onDelete={handleDeleteUser} />
@@ -145,6 +124,7 @@ const Tabs = () => {
             </div>
         );
     };
+
 
     return (
         <div className="container-fluid" style={{ minHeight: "100vh", padding: "20px" }}>
