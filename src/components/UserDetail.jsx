@@ -3,16 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faTrash,
     faSave,
-    faTimes,
-    faChevronLeft,
-    faChevronRight
+    faTimes
 } from "@fortawesome/free-solid-svg-icons";
+import UserCalendar from "./UserCalendar"; // ← import your new component
 
 const UserDetail = ({ user, onSave, onClose, onDelete }) => {
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
     const [pin, setPin] = useState(user.pin || "");
-    const [startDayOffset, setStartDayOffset] = useState(0);
+    const [monthOffset, setMonthOffset] = useState(0);
     const [bookings, setBookings] = useState([]);
 
     useEffect(() => {
@@ -30,53 +29,41 @@ const UserDetail = ({ user, onSave, onClose, onDelete }) => {
         onDelete(user);
     };
 
-    const norwegianMonths = [
-        "januar", "februar", "mars", "april", "mai", "juni",
-        "juli", "august", "september", "oktober", "november", "desember"
-    ];
+    const generateBookings = () => {
+        const baseDate = new Date();
+        baseDate.setDate(1);
+        baseDate.setMonth(baseDate.getMonth() + monthOffset);
 
-    const formatDate = (date) => {
-        const d = new Date(date);
-        const day = d.getDate();
-        const monthName = norwegianMonths[d.getMonth()];
-        const year = d.getFullYear();
-        return `${day}. ${monthName} ${year}`;
-    };
+        const year = baseDate.getFullYear();
+        const month = baseDate.getMonth();
+        const lastDay = new Date(year, month + 1, 0).getDate();
 
-    const getCurrentMonthTitle = () => {
-        const firstDate = new Date();
-        firstDate.setDate(firstDate.getDate() + startDayOffset);
-        return `${norwegianMonths[firstDate.getMonth()]} ${firstDate.getFullYear()}`;
-    };
-
-    const generateBookings = (offsetStart) => {
-        const today = new Date();
         const bookingsArray = [];
 
-        for (let i = 0; i < 4; i++) {
-            const date = new Date(today);
-            date.setDate(date.getDate() + offsetStart + i);
-
-            bookingsArray.push({
-                date: date,
-                green: Math.floor(Math.random() * 3),
-                yellow: Math.floor(Math.random() * 3),
-                auditorium: Math.floor(Math.random() * 3),
-            });
+        for (let day = 1; day <= lastDay; day++) {
+            if (Math.random() < 0.3) {
+                const date = new Date(year, month, day);
+                bookingsArray.push({
+                    date,
+                    green: Math.floor(Math.random() * 3),
+                    yellow: Math.floor(Math.random() * 3),
+                    auditorium: Math.floor(Math.random() * 3),
+                });
+            }
         }
 
         return bookingsArray;
     };
 
     useEffect(() => {
-        setBookings(generateBookings(startDayOffset));
-    }, [startDayOffset]);
+        setBookings(generateBookings());
+    }, [monthOffset]);
 
     const inputStyle = {
         maxWidth: "300px",
-        color: "#6f42c1", // purple text
-        backgroundColor: "#ffffff", // white background
-        border: "1px solid #ccc", // gray border
+        color: "#6f42c1",
+        backgroundColor: "#ffffff",
+        border: "1px solid #ccc",
         borderRadius: "4px",
         padding: "8px"
     };
@@ -93,7 +80,7 @@ const UserDetail = ({ user, onSave, onClose, onDelete }) => {
 
             <h4>Rediger Bruker</h4>
 
-            {/* Navn */}
+            {/* Inputs */}
             <div className="d-flex mb-3">
                 <span style={{ width: "200px", fontWeight: "bold", color: "#6f42c1" }}>Navn</span>
                 <input
@@ -104,8 +91,6 @@ const UserDetail = ({ user, onSave, onClose, onDelete }) => {
                     style={inputStyle}
                 />
             </div>
-
-            {/* E-postadresse */}
             <div className="d-flex mb-3">
                 <span style={{ width: "200px", fontWeight: "bold", color: "#6f42c1" }}>E-postadresse</span>
                 <input
@@ -116,8 +101,6 @@ const UserDetail = ({ user, onSave, onClose, onDelete }) => {
                     style={inputStyle}
                 />
             </div>
-
-            {/* PIN */}
             <div className="d-flex mb-3">
                 <span style={{ width: "200px", fontWeight: "bold", color: "#6f42c1" }}>PIN</span>
                 <input
@@ -136,57 +119,15 @@ const UserDetail = ({ user, onSave, onClose, onDelete }) => {
                     Slett
                 </button>
                 <button onClick={handleSave} className="btn" style={{ backgroundColor: "#28a745", color: "#fff" }}>
-                    <FontAwesomeIcon icon={faSave} className="me-2" style={{ color: "#fff" }} />
+                    <FontAwesomeIcon icon={faSave} className="me-2" />
                     Lagre
                 </button>
             </div>
 
             <hr />
 
-            {/* Calendar Header */}
-            <div className="d-flex justify-content-center align-items-center mb-2" style={{ maxWidth: "100%" }}>
-                <button
-                    className="btn btn-outline-secondary btn-sm"
-                    onClick={() => setStartDayOffset((prev) => prev - 4)}
-                    style={{ marginRight: "10px" }}
-                >
-                    <FontAwesomeIcon icon={faChevronLeft} />
-                </button>
-                <h6 className="m-0" style={{ fontWeight: "bold", color: "#6f42c1" }}>
-                    {getCurrentMonthTitle()}
-                </h6>
-                <button
-                    className="btn btn-outline-secondary btn-sm"
-                    onClick={() => setStartDayOffset((prev) => prev + 4)}
-                    style={{ marginLeft: "10px" }}
-                >
-                    <FontAwesomeIcon icon={faChevronRight} />
-                </button>
-            </div>
-
-            {/* Calendar Table (no scroll) */}
-            <div className="table-responsive" style={{ overflowX: "hidden" }}>
-                <table className="table table-sm table-bordered text-center align-middle mb-0" style={{ fontSize: "0.85rem" }}>
-                    <thead className="table-light">
-                        <tr>
-                            <th style={{ width: "200px" }}>Dato</th>
-                            <th>Green Room</th>
-                            <th>Yellow Room</th>
-                            <th>Auditorium</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {bookings.map((booking, idx) => (
-                            <tr key={idx}>
-                                <td style={{ fontWeight: "bold" }}>{formatDate(booking.date)}</td>
-                                <td>{booking.green > 0 ? `${booking.green}t` : "-"}</td>
-                                <td>{booking.yellow > 0 ? `${booking.yellow}t` : "-"}</td>
-                                <td>{booking.auditorium > 0 ? `${booking.auditorium}t` : "-"}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            {/* Calendar Section */}
+            <UserCalendar bookings={user.bookings || []} />
         </div>
     );
 };

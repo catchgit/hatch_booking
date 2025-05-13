@@ -3,16 +3,12 @@ import Button from "../components/Button"; // Import the Button component
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faPlus } from "@fortawesome/free-solid-svg-icons";
 import UserDetail from "../components/UserDetail"; // Import the new UserDetail component
+import { users as initialUsers } from "../components/data";
 
 const Tabs = () => {
     const [selectedTab, setSelectedTab] = useState("leietakere");
     const [selectedUser, setSelectedUser] = useState(null); // Track the selected user
-    const [users, setUsers] = useState([
-        { name: "Ola Nordmann", email: "ola.nordmann@example.com" },
-        { name: "Kari Nordmann", email: "kari.nordmann@example.com" },
-        { name: "Per Hansen", email: "per.hansen@example.com" },
-        { name: "Lise Johansen", email: "lise.johansen@example.com" }
-    ]);
+    const [users, setUsers] = useState(initialUsers);
 
     const handleTabClick = (tab) => {
         setSelectedTab(tab);
