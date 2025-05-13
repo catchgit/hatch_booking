@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 const norwegianMonths = [
-    "januar", "februar", "mars", "april", "mai", "juni",
-    "juli", "august", "september", "oktober", "november", "desember"
+    "Januar", "Februar", "Mars", "April", "Mai", "Juni",
+    "Juli", "August", "September", "Oktober", "November", "Desember"
 ];
 
 const UserBooking = ({ users }) => {
@@ -29,6 +29,11 @@ const UserBooking = ({ users }) => {
         return user.bookings
             ? user.bookings.reduce((sum, booking) => sum + (booking[room] || 0), 0)
             : 0;
+    };
+
+    // Function to calculate the total booked hours for a room across all users
+    const getTotalForRoomAcrossAllUsers = (room) => {
+        return filteredUsers.reduce((sum, user) => sum + getTotalForRoom(user, room), 0);
     };
 
     // Room names array for easy mapping to columns
@@ -92,6 +97,21 @@ const UserBooking = ({ users }) => {
                         ))
                     )}
                 </tbody>
+                {/* Total row */}
+                {filteredUsers.length > 0 && (
+                    <tfoot>
+                        <tr>
+                            <td style={{ fontWeight: "bold", color: "#6f42c1" }}>Totalt:</td>
+                            {rooms.map((room, idx) => (
+                                <td key={idx}>
+                                    {getTotalForRoomAcrossAllUsers(room) > 0
+                                        ? `${getTotalForRoomAcrossAllUsers(room)}t`
+                                        : ""}
+                                </td>
+                            ))}
+                        </tr>
+                    </tfoot>
+                )}
             </table>
         </div>
     );

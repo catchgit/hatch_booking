@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 const norwegianMonths = [
-    "januar", "februar", "mars", "april", "mai", "juni",
-    "juli", "august", "september", "oktober", "november", "desember"
+    "Januar", "Februar", "Mars", "April", "Mai", "Juni",
+    "Juli", "August", "September", "Oktober", "November", "Desember"
 ];
 
 const UserCalendar = ({ bookings }) => {
@@ -26,11 +26,12 @@ const UserCalendar = ({ bookings }) => {
 
     const formatDate = (dateStr) => {
         const date = new Date(dateStr);
-        const day = date.getDate();
-        const monthName = norwegianMonths[date.getMonth()];
+        const day = date.getDate().toString().padStart(2, "0"); // Adds leading zero if single digit
+        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is 0-based, so add 1 and pad
         const year = date.getFullYear();
-        return `${day}. ${monthName} ${year}`;
+        return `${day}.${month}.${year}`;
     };
+
 
     const getCurrentMonthTitle = () => {
         const refDate = new Date();
