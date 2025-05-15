@@ -5,7 +5,6 @@ const Button = (props) => {
         text,
         type = 'primary',
         onClick,
-        className = '',
         style = {},
         disabled,
         classes,

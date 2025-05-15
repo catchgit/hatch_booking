@@ -23,16 +23,16 @@ const App = () => (
                     <Route path="enter-pin" element={<EnterPin />} />
                     <Route path="details" element={<BookingDetails />} />
                 </Route>
-
-                <Route path="admin" element={<Admin />} />
             </Route>
+
+            <Route path="admin" element={<Admin />} />
         </Routes>
     </BrowserRouter>
 );
 
 const ProtectedRoute = ({ children }) => {
     const { selectedRoom } = useConfigProvider();
-    
+
     if (!selectedRoom) {
         return <Navigate to="/" replace />;
     }
@@ -42,7 +42,7 @@ const ProtectedRoute = ({ children }) => {
 
 const Main = () => {
     const location = useLocation();
-    
+
     // Determine which routes should show the time
     const shouldShowTime = () => {
         // Add routes where you want to hide the time
@@ -51,10 +51,12 @@ const Main = () => {
     };
 
     return (
-        <div className="container-fluid px-5">
-            <Header showTime={shouldShowTime()} />
-            <Outlet />
-        </div>
+        <section className="main-section">
+            <div className="container-fluid px-5">
+                <Header showTime={shouldShowTime()} />
+                <Outlet />
+            </div>
+        </section>
     )
 }
 

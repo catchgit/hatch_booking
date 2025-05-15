@@ -1,5 +1,5 @@
 const Input = (props) => {
-    const { value, onChange, type = 'text', col = 'col-12', name, label, autoComplete, onBlur, placeholder } = props;
+    const { value, onChange, type = 'text', col = 'col-12', name, label, autoComplete, onBlur, placeholder, classes, disabled } = props;
 
     const handleChange = (e) => {
         onChange(e.target.value);
@@ -13,10 +13,11 @@ const Input = (props) => {
                     onChange={handleChange}
                     onBlur={onBlur}
                     type={type}
-                    className={`form-control`}
+                    className={`form-control ${classes}`}
                     id={name}
                     placeholder={placeholder}
                     autoComplete={autoComplete}
+                    disabled={disabled}
                 />
             </div>
         </div>

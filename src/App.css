@@ -10,10 +10,19 @@
 }
 
 body {
-    background-color: var(--bs-primary) !important;
     font-family: 'Inter', sans-serif !important;
-    color: #ffffff !important;
     font-size: 16px;
+}
+
+.main-section {
+    background-color: var(--bs-primary) !important;
+    color: #ffffff !important;
+    min-height: 100vh;
+}
+
+.admin-section {
+    background-color: #F7F9FA;
+    min-height: 100vh;
 }
 
 .custom-vh-100 {
@@ -26,6 +35,14 @@ body {
 
 .custom-vh-90 {
     height: calc(90vh - var(--header-height));
+}
+
+.fullscreen-loader {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Typography */
@@ -82,6 +99,12 @@ h1 {
     background-color: var(--white-50) !important;
     color: #FFFFFF !important;
 }
+
+.btn-grey {
+    background-color: #22274e15 !important;
+    border: none !important;
+}
+
 
 /* Shadows */
 .shadow-right {
@@ -205,45 +228,45 @@ h1 {
     z-index: 3;
 }
 
-table {
+.custom-table table {
     table-layout: fixed;
 }
 
-thead,
-tr th {
+.custom-table thead,
+.custom-table tr th {
     position: sticky;
     padding: 1rem 1.75rem 1rem 1.75rem;
     border-radius: 16px 0 0 0;
 }
 
-thead {
+.custom-table thead {
     top: 0;
     z-index: 2;
 }
 
-thead tr>th {
+.custom-table thead tr>th {
     padding: 2rem 0;
 }
 
-thead tr>th:first-child {
+.custom-table thead tr>th:first-child {
     z-index: 3;
 }
 
-tbody tr:last-of-type th {
+.custom-table tbody tr:last-of-type th {
     border-radius: 0 0 16px 16px;
 }
 
-tr:not(:last-child) {
+.custom-table tr:not(:last-child) {
     border-bottom: 1px solid var(--white-25) !important;
 }
 
-tr>th {
+.custom-table tr>th {
     left: 0;
     z-index: 1;
     background-color: var(--white-5-hex);
 }
 
-tr>th::after {
+.custom-table tr>th::after {
     content: "";
     position: absolute;
     top: 0;
@@ -254,7 +277,7 @@ tr>th::after {
     pointer-events: none;
 }
 
-tr>td:first-of-type {
+.custom-table tr>td:first-of-type {
     padding-left: 2rem
 }
 
@@ -264,4 +287,28 @@ tr>td:first-of-type {
 
 .text-body * {
     color: var(--bs-body-color) !important;
+}
+
+.white-input {
+    background-color: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, .5) !important;
+    color: var(--bs-body-color) !important;
+}
+
+.white-input::placeholder {
+    color: rgba(0, 0, 0, .5) !important;
+}
+
+.white-input:disabled {
+    border-color: rgba(0, 0, 0, 0.11) !important;
+}
+
+.placeholder {
+    background-color: rgba(0, 0, 0, .25) !important;
+    border-radius: 8px !important;
+    padding: 1rem !important;
+}
+
+.primary-borders * {
+    border-color: var(--bs-primary) !important;
 }

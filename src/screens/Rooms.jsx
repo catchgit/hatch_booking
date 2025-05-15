@@ -8,6 +8,7 @@ import { OverlayTrigger, Popover } from "react-bootstrap";
 import nb from "date-fns/locale/nb";
 import { useConfigProvider } from "../provider/ConfigProvider";
 import { useNavigate } from "react-router-dom";
+
 const Rooms = () => {
     const { apiCall } = useAuthContext();
     const [rooms, setRooms] = useState(null);
@@ -144,7 +145,7 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
                 </button>
             </div>
             <div className="table-wrapper" onMouseDown={handleMouseDown}>
-                <table>
+                <table className="custom-table">
                     <thead>
                         <tr>
                             <th></th>
