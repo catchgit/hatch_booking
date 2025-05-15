@@ -88,14 +88,17 @@ export const SelectUser = () => {
             </div>
             <div className="col-md-6">
                 <div className="bg-white-5 px-4 py-2 rounded-3 custom-vh-90 overflow-auto">
-                    {users?.map((user, index) => (
-                        <User
-                            key={user.id}
-                            lastItem={index === users.length - 1}
-                            onClick={() => selectUser(user)}
-                            {...user}
-                        />
-                    ))}
+                    {users && users
+                        .filter((user) => user.hidden != true)
+                        .sort((a, b) => a.displayName.localeCompare(b.displayName))
+                        .map((user, index) => (
+                            <User
+                                key={user.id}
+                                lastItem={index === users.length - 1}
+                                onClick={() => selectUser(user)}
+                                {...user}
+                            />
+                        ))}
                 </div>
             </div>
         </div>
@@ -229,7 +232,7 @@ export const BookingDetails = () => {
             if (!prev.from) {
                 return { from: time, to: null };
             }
-            
+
             // If only "from" is selected, set "to" time
             if (!prev.to) {
                 // Ensure "to" is after "from"

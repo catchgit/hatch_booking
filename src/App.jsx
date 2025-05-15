@@ -12,7 +12,7 @@ const App = () => (
         <Routes>
             <Route path="/" element={<Main />}>
                 {/* Overview of all rooms */}
-                <Route index element={<Admin />} />
+                <Route index element={<Rooms />} />
 
                 {/* Individual room routes */}
                 <Route path=":roomEmail" element={<ProtectedRoute><Room /></ProtectedRoute>} />
@@ -46,7 +46,7 @@ const Main = () => {
     // Determine which routes should show the time
     const shouldShowTime = () => {
         // Add routes where you want to hide the time
-        const routesWithoutTime = ['/', '/another-route'];
+        const routesWithoutTime = ['/another-route'];
         return !routesWithoutTime.includes(location.pathname);
     };
 

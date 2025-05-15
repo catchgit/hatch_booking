@@ -10,56 +10,21 @@ import {
 import UserCalendar from "./UserCalendar"; // ← import your new component
 
 const UserDetail = ({ user, onSave, onClose, onDelete }) => {
-    const [name, setName] = useState(user.name);
-    const [email, setEmail] = useState(user.email);
+    const [name, setName] = useState(user.displayName);
+    const [email, setEmail] = useState(user.mail);
     const [pin, setPin] = useState(user.pin || "");
+    const [hidden, setHidden] = useState(user.hidden);
     const [monthOffset, setMonthOffset] = useState(0);
     const [bookings, setBookings] = useState([]);
 
-    useEffect(() => {
-        setName(user.name);
-        setEmail(user.email);
-        setPin(user.pin || "");
-    }, [user]);
-
     const handleSave = () => {
-        const updatedUser = { ...user, name, email, pin };
+        const updatedUser = { ...user, displayName: name, mail: email, pin, hidden: hidden ?? false };
         onSave(updatedUser);
     };
 
     const handleDelete = () => {
         onDelete(user);
     };
-
-    const generateBookings = () => {
-        const baseDate = new Date();
-        baseDate.setDate(1);
-        baseDate.setMonth(baseDate.getMonth() + monthOffset);
-
-        const year = baseDate.getFullYear();
-        const month = baseDate.getMonth();
-        const lastDay = new Date(year, month + 1, 0).getDate();
-
-        const bookingsArray = [];
-
-        for (let day = 1; day <= lastDay; day++) {
-            if (Math.random() < 0.3) {
-                const date = new Date(year, month, day);
-                bookingsArray.push({
-                    date,
-                    green: Math.floor(Math.random() * 3),
-                    yellow: Math.floor(Math.random() * 3),
-                    auditorium: Math.floor(Math.random() * 3),
-                });
-            }
-        }
-
-        return bookingsArray;
-    };
-
-    useEffect(() => {
-        setBookings(generateBookings());
-    }, [monthOffset]);
 
     const inputStyle = {
         maxWidth: "300px",
@@ -91,6 +56,7 @@ const UserDetail = ({ user, onSave, onClose, onDelete }) => {
                     onChange={(e) => setName(e.target.value)}
                     className="form-control"
                     style={inputStyle}
+                    disabled={user.azure}
                 />
             </div>
             <div className="d-flex mb-3">
@@ -101,6 +67,7 @@ const UserDetail = ({ user, onSave, onClose, onDelete }) => {
                     onChange={(e) => setEmail(e.target.value)}
                     className="form-control"
                     style={inputStyle}
+                    disabled={user.azure}
                 />
             </div>
             <div className="d-flex mb-3">
@@ -112,6 +79,18 @@ const UserDetail = ({ user, onSave, onClose, onDelete }) => {
                     className="form-control"
                     style={inputStyle}
                 />
+            </div>
+            <div className="d-flex mb-3">
+                <span style={{ width: "200px", fontWeight: "bold", color: "#6f42c1" }}>Gjemt</span>
+                <select
+                    className="form-select"
+                    style={inputStyle}
+                    value={hidden}
+                    onChange={(e) => setHidden(e.target.value)}
+                >
+                    <option value="0">Nei</option>
+                    <option value="1">Ja</option>
+                </select>
             </div>
 
             {/* Buttons */}
@@ -129,7 +108,7 @@ const UserDetail = ({ user, onSave, onClose, onDelete }) => {
             <hr />
 
             {/* Calendar Section */}
-            <UserCalendar bookings={user.bookings || []} />
+            <UserCalendar user={user.mail} />
         </div>
     );
 };

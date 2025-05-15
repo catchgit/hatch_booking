@@ -158,9 +158,9 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
                                         <a href="#" className="text-decoration-underline unbreakable mb-0" onClick={(e) => handleRoomClick(room, e)}>
                                             <h4 className="text-decoration-underline unbreakable mb-0">{room.name}</h4>
                                         </a>
-                                        <div className="room-plus-box ms-5">
+                                        <a href={`/${room.email}/booking`} onClick={(e) => e.preventDefault()} className="room-plus-box ms-5 text-white">
                                             <FontAwesomeIcon icon={["far", "plus"]} />
-                                        </div>
+                                        </a>
                                     </div>
                                 </th>
                                 {timeSlots.map((time, index) => {

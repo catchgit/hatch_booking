@@ -1,15 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faPlus } from "@fortawesome/free-solid-svg-icons";
 import UserDetail from "../components/UserDetail";
 import UserBooking from "../components/UserBooking"; // Import the new UserBookingCalendar
 import { users as initialUsers } from "../components/data";
+import { useAuthContext } from "../provider/AuthProvider";
+import { toast } from "react-toastify";
 
 const Tabs = () => {
+    const { apiCall } = useAuthContext();
     const [selectedTab, setSelectedTab] = useState("leietakere");
     const [selectedUser, setSelectedUser] = useState(null);
-    const [users, setUsers] = useState(initialUsers);
+    const [users, setUsers] = useState([]);
+
+    const getUsers = async () => {
+        await apiCall({
+            action: 'getUsers'
+        })
+            .then((res) => {
+                if (res.status === 200) {
+                    setUsers(res.data);
+                } else {
+                    toast.error('Kunne ikke hente brukere')
+                }
+            })
+    }
 
     const handleTabClick = (tab) => {
         setSelectedTab(tab);
@@ -20,22 +36,30 @@ const Tabs = () => {
         setSelectedTab("userDetails"); // Switch to the user details tab
     };
 
-    const handleSaveUser = (updatedUser) => {
-        if (updatedUser.email && updatedUser.name) {
-            const userExists = users.some((user) => user.email === updatedUser.email);
-
-            if (!userExists) {
-                setUsers((prevUsers) => [...prevUsers, updatedUser]);
-            } else {
-                const updatedUsers = users.map((user) =>
-                    user.email === updatedUser.email ? updatedUser : user
-                );
-                setUsers(updatedUsers);
-            }
-
-            setSelectedUser(null);
-            setSelectedTab("leietakere");
-        }
+    const handleSaveUser = async (updatedUser) => {
+        await apiCall({
+            action: 'updateUser',
+            data: updatedUser
+        })
+            .then((res) => {
+                if (res.status === 200) {
+                    const userExists = users.some((user) => user.mail === updatedUser.mail);
+                    if (!userExists) {
+                        setUsers((prevUsers) => [...prevUsers, updatedUser]);
+                        toast.success("Bruker lagt til!")
+                    } else {
+                        const updatedUsers = users.map((user) =>
+                            user.mail === updatedUser.mail ? updatedUser : user
+                        );
+                        setUsers(updatedUsers);
+                        toast.success("Bruker oppdatert!")
+                    }
+                }
+            })
+            .finally(() => {
+                setSelectedUser(null);
+                setSelectedTab('leietakere');
+            });
     };
 
     const handleAddUser = () => {
@@ -44,11 +68,25 @@ const Tabs = () => {
         setSelectedTab("userDetails");
     };
 
-    const handleDeleteUser = (userToDelete) => {
-        const filteredUsers = users.filter((u) => u.email !== userToDelete.email);
-        setUsers(filteredUsers);
-        setSelectedUser(null);
-        setSelectedTab("leietakere");
+    const handleDeleteUser = async (userToDelete) => {
+        await apiCall({
+            action: 'deleteUser',
+            email: userToDelete.mail
+        })
+        .then((res) => {
+            if(res.status === 200) {
+                toast.success("Bruker slettet!");
+
+                const filteredUsers = users.filter((u) => u.mail !== userToDelete.mail);
+                setUsers(filteredUsers);
+            } else {
+                toast.error("Kunne ikke slette bruker");
+            }
+        })
+        .finally(() => {
+            setSelectedUser(null);
+            setSelectedTab("leietakere");
+        })
     };
 
     const Sidebar = () => {
@@ -91,7 +129,7 @@ const Tabs = () => {
     const UserList = ({ users, onUserClick }) => {
         return (
             <div className="list-group">
-                {users.map((user, index) => (
+                {users.sort((a, b) => a.displayName.localeCompare(b.displayName)).map((user, index) => (
                     <div
                         key={index}
                         className="list-group-item d-flex justify-content-between align-items-center mb-3 py-3"
@@ -99,10 +137,11 @@ const Tabs = () => {
                         onClick={() => onUserClick(user)}
                     >
                         <h4 className="m-0 text-primary" style={{ textDecoration: "underline", cursor: "pointer" }}>
-                            {user.name}
+                            <FontAwesomeIcon icon={["far", user.hidden ? "eye-slash" : "eye"]} className="me-2" />
+                            {user.displayName}
                         </h4>
                         <span className="text-muted fs-6" style={{ opacity: 0.6 }}>
-                            <small>{user.email}</small>
+                            <small>{user.mail}</small>
                         </span>
                     </div>
                 ))}
@@ -124,6 +163,10 @@ const Tabs = () => {
             </div>
         );
     };
+
+    useEffect(() => {
+        getUsers();
+    }, []);
 
 
     return (

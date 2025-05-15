@@ -1,22 +1,45 @@
-// Component som legger seg under TabContent til UserDetail
-
-import React, { useState, useMemo } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+import { useAuthContext } from "../provider/AuthProvider";
 
 const norwegianMonths = [
     "Januar", "Februar", "Mars", "April", "Mai", "Juni",
     "Juli", "August", "September", "Oktober", "November", "Desember"
 ];
 
-const UserCalendar = ({ bookings }) => {
+const UserCalendar = ({ user }) => {
+    const { apiCall } = useAuthContext();
+    const [bookings, setBookings] = useState({});
     const [monthOffset, setMonthOffset] = useState(0);
 
+    const getBookings = async () => {
+        try {
+            const res = await apiCall({
+                action: 'getUserBookings',
+                email: user
+            });
+
+            if (res.status === 200) {
+                setBookings(res.data);
+            } else {
+                setBookings({});
+                toast.error("Kunne ikke hente bookinger");
+            }
+        } catch (error) {
+            toast.error("En feil oppstod under henting av bookinger");
+            setBookings({});
+        }
+    };
+
     const currentMonthBookings = useMemo(() => {
+        if (!Array.isArray(bookings)) return [];
+
         const today = new Date();
         const targetMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
 
-        return bookings.filter(b => {
+        return bookings.filter((b) => {
             const bookingDate = new Date(b.date);
             return (
                 bookingDate.getMonth() === targetMonth.getMonth() &&
@@ -27,12 +50,11 @@ const UserCalendar = ({ bookings }) => {
 
     const formatDate = (dateStr) => {
         const date = new Date(dateStr);
-        const day = date.getDate().toString().padStart(2, "0"); // Adds leading zero if single digit
-        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is 0-based, so add 1 and pad
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
         const year = date.getFullYear();
         return `${day}.${month}.${year}`;
     };
-
 
     const getCurrentMonthTitle = () => {
         const refDate = new Date();
@@ -48,6 +70,10 @@ const UserCalendar = ({ bookings }) => {
         const total = getColumnTotals(column);
         return total > 0 ? `${total}t` : "";
     };
+
+    useEffect(() => {
+        getBookings();
+    }, [user]);
 
     return (
         <div>
@@ -104,7 +130,7 @@ const UserCalendar = ({ bookings }) => {
                     <tfoot>
                         <tr>
                             <td style={{ fontWeight: "bold", color: "#6f42c1" }}>Totalt:</td>
-                            <td>{getFormattedTotal('green')}</td>
+                            <td>{getFormattedTotal('greenroom@catchmedia.no')}</td>
                             <td>{getFormattedTotal('yellow')}</td>
                             <td>{getFormattedTotal('auditorium')}</td>
                             <td>{getFormattedTotal('red')}</td>
