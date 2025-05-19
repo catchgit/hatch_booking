@@ -21,11 +21,11 @@ const msalInstance = new PublicClientApplication(msalConfig);
 
 createRoot(document.getElementById('root')).render(
     <MsalProvider instance={msalInstance}>
-        <ConfigProvider>
-            <AuthProvider>
+        <AuthProvider>
+            <ConfigProvider>
                 <App />
-            </AuthProvider>
-        </ConfigProvider>
+            </ConfigProvider>
+        </AuthProvider>
 
         <ToastContainer
             theme="colored"

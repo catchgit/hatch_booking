@@ -20,7 +20,7 @@ const AdminProvider = ({ children }) => {
     const { apiCall } = useAuthContext();
     const { users, updateUsers, rooms } = useConfigProvider();
     const [selectedUser, setSelectedUser] = useState(null);
-    const [selectedTab, setSelectedTab] = useState("bookinger");
+    const [selectedTab, setSelectedTab] = useState("leietakere");
     const [savingUserDetails, setSavingUserDetails] = useState(false);
     const [deletingUser, setDeletingUser] = useState(false);
 
@@ -294,7 +294,7 @@ const UserDetail = () => {
                     <select
                         className="form-select white-input"
                         value={hidden}
-                        onChange={setHidden}
+                        onChange={e => setHidden(e.target.value)}
                     >
                         <option value="0">Nei</option>
                         <option value="1">Ja</option>
@@ -472,10 +472,9 @@ const UserCalendar = () => {
 
 const Bookings = () => {
     const { apiCall } = useAuthContext();
-    const { rooms, selectedUser: user } = useAdminContext();
 
     const [bookings, setBookings] = useState({});
-    const [allDates, setAllDates] = useState([]);
+    const [rooms, setRooms] = useState({});
     const [monthOffset, setMonthOffset] = useState(0);
     const [loading, setLoading] = useState(true);
 
@@ -486,24 +485,22 @@ const Bookings = () => {
     };
 
     const getBookings = async () => {
+        setLoading(true);
         try {
+            const refDate = new Date();
+            refDate.setMonth(refDate.getMonth() + monthOffset);
+
             const res = await apiCall({
-                action: 'getUserBookings',
-                email: user.mail
+                action: 'getMonthlyUserRoomStats',
+                month: refDate.getFullYear() + '-' + String(refDate.getMonth() + 1).padStart(2, '0')
             });
 
             if (res.status === 200) {
-                const allDates = Array.from(
-                    new Set(
-                        Object.values(res.data)
-                            .flatMap(room => Object.keys(room.days))
-                    )
-                ).sort();
-
                 setBookings(res.data);
-                setAllDates(allDates);
+                setRooms(res.rooms);
             } else {
                 setBookings([]);
+                setRooms([]);
                 toast.error("Kunne ikke hente bookinger");
             }
         } catch (error) {
@@ -516,20 +513,7 @@ const Bookings = () => {
 
     useEffect(() => {
         getBookings();
-    }, []);
-
-    const filteredDates = useMemo(() => {
-        const currentDate = new Date();
-        currentDate.setMonth(currentDate.getMonth() + monthOffset);
-        const targetMonth = currentDate.getMonth();
-        const targetYear = currentDate.getFullYear();
-
-        return allDates.filter(date => {
-            const bookingDate = new Date(date);
-            return bookingDate.getMonth() === targetMonth &&
-                bookingDate.getFullYear() === targetYear;
-        });
-    }, [allDates, monthOffset]);
+    }, [monthOffset]);
 
     return (
         <>
@@ -567,13 +551,37 @@ const Bookings = () => {
                         <thead>
                             <tr>
                                 <th scope="col"></th>
-                                {rooms?.sort((a, b) => a.name.localeCompare(b.name))?.map((room, index) => (
-                                    <th key={index} scope="col" className="text-primary unbreakable">{room.name}</th>
+                                {rooms?.sort((a, b) => a.localeCompare(b))?.map((room, index) => (
+                                    <th key={index} scope="col" className="text-primary unbreakable">{room}</th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredDates.map((date, rowIndex) => (
+                            {bookings
+                                .filter(item => item.total > 0)
+                                .map((item, index) => (
+                                    <tr key={index}>
+                                        <th scope="row" className="text-primary unbreakable pe-4" style={{ borderRight: '1px solid var(--bs-primary)' }}>
+                                            {item.user}
+                                        </th>
+                                        {rooms.map((roomKey, colIndex) => {
+                                            const hours = item[roomKey];
+                                            if (!hours) return <td key={colIndex}></td>;
+
+                                            const wholeHours = Math.floor(hours);
+                                            const minutes = Math.round((hours - wholeHours) * 60);
+                                            return (
+                                                <td key={colIndex} className="text-end">
+                                                    {wholeHours}:{minutes.toString().padStart(2, '0')}
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                ))}
+
+
+
+                            {/*  {filteredDates.map((date, rowIndex) => (
                                 <tr key={rowIndex}>
                                     <th scope="row" className="text-primary unbreakable pe-4" style={{ borderRight: '1px solid var(--bs-primary)' }}>{format(date, 'dd.MM.yyyy')}</th>
                                     {rooms.map((room, colIndex) => {
@@ -587,8 +595,8 @@ const Bookings = () => {
                                             : <td></td>;
                                     })}
                                 </tr>
-                            ))}
-                            <tr>
+                            ))} */}
+                            {/* <tr>
                                 <th scope="row text-primary unbreakable pe-4" style={{ borderBottom: 'none' }}></th>
                                 {rooms.map((room, index) => {
                                     const totalHours = bookings[room.email]?.total_hours ?? 0;
@@ -600,7 +608,7 @@ const Bookings = () => {
                                         </td>
                                     );
                                 })}
-                            </tr>
+                            </tr> */}
                         </tbody>
                     </table>
                 )}

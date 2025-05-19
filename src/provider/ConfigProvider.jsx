@@ -1,16 +1,21 @@
 import axios from 'axios';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { FullscreenLoader } from '../screens/FullscreenLoader';
+import { useAuthContext } from './AuthProvider';
+import { useParams } from 'react-router-dom';
 
 const ConfigContext = createContext();
 
 export const ConfigProvider = ({ children }) => {
+    const { updateAccessToken } = useAuthContext();
     const [users, setUsers] = useState([]);
     const [rooms, setRooms] = useState([]);
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [loading, setLoading] = useState(true);
     const [usersLoaded, setUsersLoaded] = useState(false);
     const [roomsLoaded, setRoomsLoaded] = useState(false);
+
+    const params = useParams();
 
     const apiCall = async (data) => {
         if (!data.action) {
@@ -31,7 +36,8 @@ export const ConfigProvider = ({ children }) => {
             if (response.status === 200) {
                 // Check for unauthorized acces
                 if (response.data.status === 401) {
-                    setAccessToken(null);
+                    updateAccessToken(null);
+                    setLoading(false);
                     return false;
                 }
 
@@ -64,6 +70,10 @@ export const ConfigProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
+        console.log(params)
+    }, [params])
+
+    useEffect(() => {
         if (usersLoaded && roomsLoaded) {
             setLoading(false);
         }
@@ -84,7 +94,7 @@ export const ConfigProvider = ({ children }) => {
                 setUsers(users);
             }
         }}>
-            {loading ? <FullscreenLoader /> : children}
+            {loading ? <FullscreenLoader theme="dark" /> : children}
         </ConfigContext.Provider>
     );
 };

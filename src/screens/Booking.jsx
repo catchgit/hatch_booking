@@ -8,6 +8,7 @@ import { eachDayOfInterval, endOfMonth, format, getDay, startOfMonth, addMonths 
 import { nb } from "date-fns/locale";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import { useConfigProvider } from "../provider/ConfigProvider";
 
 const BookingContext = createContext(null);
 
@@ -23,7 +24,7 @@ const BookingProvider = ({ children }) => {
     const { apiCall } = useAuthContext();
     const navigate = useNavigate();
     const params = useParams();
-
+    const [loading, setLoading] = useState(false);
     const [booking, setBooking] = useState({
         selectedUser: null,
         pin: null,
@@ -45,6 +46,8 @@ const BookingProvider = ({ children }) => {
         <BookingContext.Provider value={{
             users,
             booking,
+            loading,
+            setLoading,
             selectUser: (user) => {
                 setBooking(prev => ({
                     ...prev,
@@ -59,14 +62,11 @@ const BookingProvider = ({ children }) => {
     )
 }
 
-export const BookingContainer = () => {
-
-    return (
-        <BookingProvider>
-            <Outlet />
-        </BookingProvider>
-    )
-}
+export const BookingContainer = () => (
+    <BookingProvider>
+        <Outlet />
+    </BookingProvider>
+)
 
 export const SelectUser = () => {
     const { users, selectUser } = useBookingContext();
@@ -202,7 +202,8 @@ export const EnterPin = () => {
 
 export const BookingDetails = () => {
     const { apiCall } = useAuthContext();
-    const { booking } = useBookingContext();
+    const { rooms } = useConfigProvider();
+    const { booking, loading, setLoading } = useBookingContext();
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [bookingTitle, setBookingTitle] = useState('');
     const [selectedTimeRange, setSelectedTimeRange] = useState({
@@ -210,6 +211,8 @@ export const BookingDetails = () => {
         to: null
     });
     const days = ["MA", "TI", "ON", "TO", "FR", "LØ", "SØ"];
+    const navigate = useNavigate();
+    const params = useParams();
 
     // Generate time slots from 07:00 to 20:00
     const generateTimeSlots = () => {
@@ -226,7 +229,50 @@ export const BookingDetails = () => {
 
     const timeSlots = generateTimeSlots();
 
+    const isTimeInRange = (time) => {
+        if (!selectedTimeRange.from) return false;
+        if (!selectedTimeRange.to) return time === selectedTimeRange.from;
+
+        return time >= selectedTimeRange.from && time <= selectedTimeRange.to;
+    };
+
+    const isTimeSlotBooked = (time) => {
+        if (!roomEvents) return false;
+        
+        const selectedDateStr = format(selectedDate, 'yyyy-MM-dd');
+        
+        return roomEvents.some(event => {
+            const eventStart = format(new Date(event.start), 'HH:mm');
+            const eventEnd = format(new Date(event.end), 'HH:mm');
+            const eventDate = format(new Date(event.start), 'yyyy-MM-dd');
+            
+            return eventDate === selectedDateStr && time >= eventStart && time < eventEnd;
+        });
+    };
+
+    const hasBookedSlotsInRange = () => {
+        if (!selectedTimeRange.from || !selectedTimeRange.to) return false;
+
+        // Get all time slots between from and to
+        const startIndex = timeSlots.indexOf(selectedTimeRange.from);
+        const endIndex = timeSlots.indexOf(selectedTimeRange.to);
+        
+        if (startIndex === -1 || endIndex === -1) return false;
+
+        // Check each time slot in the range
+        for (let i = startIndex; i <= endIndex; i++) {
+            if (isTimeSlotBooked(timeSlots[i])) {
+                return true;
+            }
+        }
+        
+        return false;
+    };
+
     const handleTimeClick = (time) => {
+        // Don't allow selection if the time slot is booked
+        if (isTimeSlotBooked(time)) return;
+
         setSelectedTimeRange(prev => {
             // If no time is selected, start new selection
             if (!prev.from) {
@@ -246,13 +292,6 @@ export const BookingDetails = () => {
             // start a new selection
             return { from: time, to: null };
         });
-    };
-
-    const isTimeInRange = (time) => {
-        if (!selectedTimeRange.from) return false;
-        if (!selectedTimeRange.to) return time === selectedTimeRange.from;
-
-        return time >= selectedTimeRange.from && time <= selectedTimeRange.to;
     };
 
     const handleDateClick = (day) => {
@@ -339,16 +378,29 @@ export const BookingDetails = () => {
     };
 
     const handleBookingRequest = async () => {
-        const response = await apiCall({
-            action: 'bookRoom',
-            userId: booking.selectedUser.email,
-            email: booking.selectedUser.mail,
-            date: format(selectedDate, 'yyyy-MM-dd'),
-            timeFrom: selectedTimeRange.from,
-            timeTo: selectedTimeRange.to,
-            title: bookingTitle
-        });
+        setLoading(true);
+
+        try {
+            const response = await apiCall({
+                action: 'bookRoom',
+                userId: booking.selectedUser.email,
+                email: booking.selectedUser.mail,
+                date: format(selectedDate, 'yyyy-MM-dd'),
+                timeFrom: selectedTimeRange.from,
+                timeTo: selectedTimeRange.to,
+                title: bookingTitle,
+                roomEmail: params.roomEmail
+            });
+
+            if (response.status === 201) {
+                navigate(`/${params.roomEmail}/booking/success`);
+            }
+        } finally {
+            setLoading(false);
+        }
     }
+
+    const roomEvents = rooms.find(room => room.email === params.roomEmail).events;
 
     return (
         <div className="row custom-vh-90">
@@ -383,7 +435,8 @@ export const BookingDetails = () => {
                             classes="text-white"
                             leftIcon="floppy-disk"
                             onClick={handleBookingRequest}
-                            disabled={!selectedTimeRange.from || !selectedTimeRange.to}
+                            disabled={!selectedTimeRange.from || !selectedTimeRange.to || !bookingTitle || hasBookedSlotsInRange()}
+                            loading={loading}
                         />
                     </div>
                 </div>
@@ -392,23 +445,30 @@ export const BookingDetails = () => {
                     <div className="col-12">
                         <div className="bg-white-5 p-4 rounded-4">
                             <div className="d-flex flex-wrap justify-content-start" style={{ margin: "-2px" }}>
-                                {timeSlots.map((time, index) => (
-                                    <div
-                                        key={time}
-                                        className={`d-flex align-items-center justify-content-center rounded-4 ${isTimeInRange(time) ? 'bg-success text-white' : 'bg-white-5'
+                                {timeSlots.map((time, index) => {
+                                    const isBooked = isTimeSlotBooked(time);
+                                    return (
+                                        <div
+                                            key={time}
+                                            className={`d-flex align-items-center justify-content-center rounded-4 ${
+                                                isTimeInRange(time) ? 'bg-success text-white' : 
+                                                isBooked ? 'bg-danger text-white booked' : 
+                                                'bg-white-5'
                                             }`}
-                                        style={{
-                                            width: "calc(12.5% - 4px)",
-                                            aspectRatio: "1",
-                                            cursor: "pointer",
-                                            transition: "all 0.2s ease",
-                                            margin: "2px"
-                                        }}
-                                        onClick={() => handleTimeClick(time)}
-                                    >
-                                        {time}
-                                    </div>
-                                ))}
+                                            style={{
+                                                width: "calc(12.5% - 4px)",
+                                                aspectRatio: "1",
+                                                cursor: isBooked ? "not-allowed" : "pointer",
+                                                transition: "all 0.2s ease",
+                                                margin: "2px",
+                                                opacity: isBooked ? 0.7 : 1
+                                            }}
+                                            onClick={() => handleTimeClick(time)}
+                                        >
+                                            {time}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>

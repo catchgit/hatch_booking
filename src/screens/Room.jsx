@@ -1,12 +1,11 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
-import { useAuthContext } from '../provider/AuthProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { format } from 'date-fns';
-import { nb } from 'date-fns/locale';
+import { useEffect, useRef, useState } from 'react';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../components/Button';
+import { useAuthContext } from '../provider/AuthProvider';
+import { FullscreenLoader } from './FullscreenLoader';
 
 const Room = () => {
     const { apiCall } = useAuthContext();
@@ -91,7 +90,7 @@ const Room = () => {
         fetchEvents();
     }, []);
 
-    if (!loaded) return <h1>Laster...</h1>
+    if (!loaded) return <FullscreenLoader theme="dark" fullscreen={false} />
 
     return (
         <div className="row align-items-center gx-5 custom-vh-100 overflow-hidden">
@@ -188,7 +187,7 @@ const Countdown = ({ totalDuration, remainingTime, currentEvent }) => {
                             </>
                         ) : (
                             <div className="d-flex flex-column align-items-center mt-3 mb-5">
-                                <div className="round-add-button p-5">
+                                <div className="round-add-button p-5" onClick={() => navigate(`/${params.roomEmail}/booking`)}>
                                     <FontAwesomeIcon icon={["far", "plus"]} size="4x" />
                                 </div>
 

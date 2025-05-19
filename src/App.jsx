@@ -1,4 +1,4 @@
-import { BrowserRouter, Outlet, Route, Routes, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter, Outlet, Route, Routes, useLocation, Navigate, useParams } from 'react-router-dom';
 import './App.css';
 import Rooms from './screens/Rooms';
 import Admin from './screens/Admin';
@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Room from './screens/Room';
 import { BookingContainer, BookingDetails, EnterPin, SelectUser } from './screens/Booking';
 import { useConfigProvider } from './provider/ConfigProvider';
+import Success from './screens/Success';
 
 const App = () => (
     <BrowserRouter>
@@ -22,7 +23,10 @@ const App = () => (
                     <Route index element={<SelectUser />} />
                     <Route path="enter-pin" element={<EnterPin />} />
                     <Route path="details" element={<BookingDetails />} />
+                    <Route path="success" element={<Success />} />
                 </Route>
+                
+                <Route path="test" element={<Success />} />
             </Route>
 
             <Route path="admin" element={<Admin />} />
@@ -32,6 +36,9 @@ const App = () => (
 
 const ProtectedRoute = ({ children }) => {
     const { selectedRoom } = useConfigProvider();
+
+    const params = useParams();
+    
 
     if (!selectedRoom) {
         return <Navigate to="/" replace />;

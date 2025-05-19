@@ -8,27 +8,13 @@ import { OverlayTrigger, Popover } from "react-bootstrap";
 import nb from "date-fns/locale/nb";
 import { useConfigProvider } from "../provider/ConfigProvider";
 import { useNavigate } from "react-router-dom";
+import { FullscreenLoader } from "./FullscreenLoader";
 
 const Rooms = () => {
-    const { apiCall } = useAuthContext();
-    const [rooms, setRooms] = useState(null);
+    const { rooms } = useConfigProvider();
     const [selectedDate, setSelectedDate] = useState(new Date());
 
-    const getRooms = async () => {
-        const response = await apiCall({
-            action: "getRooms",
-        });
-
-        if (response.status === 200) {
-            setRooms(response.data);
-        }
-    };
-
-    useEffect(() => {
-        getRooms();
-    }, []);
-
-    if (!rooms) return <h1>Laster...</h1>;
+    if (!rooms) return <FullscreenLoader theme="dark" />;
 
     return (
         <div className="row align-items-center">
@@ -52,7 +38,7 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
         let start = new Date(selectedDate); // Use selectedDate
         start.setHours(8, 30, 0, 0);
         let end = new Date(selectedDate); // Use selectedDate
-        end.setHours(15, 30, 0, 0);
+        end.setHours(19, 30, 0, 0);
 
         while (start <= end) {
             slots.push(format(start, "HH:mm")); // Format as HH:MM
@@ -159,7 +145,7 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
                                         <a href="#" className="text-decoration-underline unbreakable mb-0" onClick={(e) => handleRoomClick(room, e)}>
                                             <h4 className="text-decoration-underline unbreakable mb-0">{room.name}</h4>
                                         </a>
-                                        <a href={`/${room.email}/booking`} onClick={(e) => e.preventDefault()} className="room-plus-box ms-5 text-white">
+                                        <a href="#" onClick={() => navigate(`/${room.email}/booking`)} className="room-plus-box ms-5 text-white">
                                             <FontAwesomeIcon icon={["far", "plus"]} />
                                         </a>
                                     </div>
