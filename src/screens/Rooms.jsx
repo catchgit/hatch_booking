@@ -110,10 +110,10 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
         document.addEventListener('mouseup', handleMouseUp);
     };
 
-    const handleRoomClick = (room, e) => {
+    const handleRoomClick = (room, e, skip = false) => {
         e.preventDefault();
         updateSelectedRoom(room.name, room.email);
-        navigate(`/${room.email}`);
+        navigate(`/${room.email}${skip ? '/booking' : ''}`);
     }
 
     return (
@@ -172,12 +172,12 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
 
                                                             </div>
                                                         ) : (
-                                                            <div className="calender-popover">
+                                                            <div className="calender-popover cursor-pointer" onClick={(e) => handleRoomClick(room, e, true)}>
                                                                 <span className="h5 opacity-75 fw-medium">{time} <FontAwesomeIcon icon={["far", "arrow-right-long"]} /> {nextAvailable}</span>
                                                                 <h4 className="mb-1">Ledig</h4>
                                                                 <div className="d-flex justify-content-between align-items-center">
                                                                     <span className="h5 opacity-50 fw-normal mb-0 me-3">Book rom</span>
-                                                                    <FontAwesomeIcon icon={["far", "pen-to-square"]} size="lg" />
+                                                                    <FontAwesomeIcon icon={["far", "pen-to-square"]} size="lg" className="text-white" />
                                                                 </div>
                                                             </div>
                                                         )}

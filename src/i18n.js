@@ -8,8 +8,7 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    fallbackLng: 'nb-NO',      // fallback to Bokmål if nothing matches
-    load: 'all',               // keep full codes (nb-NO, nn-NO, en-US, etc.)
+    fallbackLng: 'nb',
     debug: import.meta.env.MODE === 'development',
     interpolation: {
       escapeValue: false,

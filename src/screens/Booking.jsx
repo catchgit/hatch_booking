@@ -138,7 +138,7 @@ export const EnterPin = () => {
     return (
         <div className="row custom-vh-100 align-items-center">
             <div className="col-lg-6 text-center">
-                <h2 className="mb-5">{t('enter_pin')}</h2>
+                <h2 className="mb-5">Oppgi din pinkode</h2>
                 <AnimatePresence mode="wait">
                     {!isSubmitting ? (
                         <motion.div
@@ -153,6 +153,7 @@ export const EnterPin = () => {
                                 onChange={setCombination}
                                 onSubmit={handleSubmit}
                                 length={4}
+                                backButton
                             />
                         </motion.div>
                     ) : null}
@@ -246,7 +247,7 @@ export const BookingDetails = () => {
             const eventEnd = format(new Date(event.end), 'HH:mm');
             const eventDate = format(new Date(event.start), 'yyyy-MM-dd');
             
-            return eventDate === selectedDateStr && time >= eventStart && time < eventEnd;
+            return eventDate === selectedDateStr && time > eventStart && time < eventEnd;
         });
     };
 

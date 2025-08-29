@@ -1,14 +1,26 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 const Numpad = (props) => {
     const {
         value,
         onChange,
         length,
-        onSubmit
+        onSubmit,
+        backButton = false
     } = props;
 
-    const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, null, 0, null];
+    const numbers = backButton
+        ? [1, 2, 3, 4, 5, 6, 7, 8, 9, null, 0, "back"]
+        : [1, 2, 3, 4, 5, 6, 7, 8, 9, null, 0, null];
 
     const handleClick = (number) => {
+        if (number === "back") {
+            if (value.length > 0) {
+                onChange(value.slice(0, -1));
+            }
+            return;
+        }
+
         const newValue = value + number;
 
         if (newValue.length < length) {
@@ -36,7 +48,7 @@ const Numpad = (props) => {
                         className={`${number !== null ? 'numpad-item' : ''}`}
                         onClick={() => number !== null && handleClick(number)}
                     >
-                        {number}
+                        {number === "back" ? <FontAwesomeIcon icon={["far", "arrow-left"]} /> : number}
                     </div>
                 ))}
             </div>
