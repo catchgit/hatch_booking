@@ -24,7 +24,7 @@ const Button = (props) => {
             className={`btn btn-${type} ${classes}`}
             type="submit"
             onClick={disabled ? undefined : handleClick}
-            disabled={disabled}
+            disabled={disabled || loading}
             style={style}
         >
             

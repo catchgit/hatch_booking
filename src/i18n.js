@@ -4,18 +4,19 @@ import HttpBackend from 'i18next-http-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 i18n
-    .use(HttpBackend) // Load translations using HTTP
-    .use(LanguageDetector) // Detect language from browser settings
-    .use(initReactI18next) // Bind to React
-    .init({
-        fallbackLng: 'nb', // Fallback language if no match is found
-        debug: import.meta.env.MODE === 'development', // Enable debug mode in development
-        interpolation: {
-            escapeValue: false, // React already escapes by default
-        },
-        backend: {
-            loadPath: '/locales/{{lng}}/{{ns}}.json', // Translation file path
-        },
-    });
+  .use(HttpBackend)
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    fallbackLng: 'nb-NO',      // fallback to Bokmål if nothing matches
+    load: 'all',               // keep full codes (nb-NO, nn-NO, en-US, etc.)
+    debug: import.meta.env.MODE === 'development',
+    interpolation: {
+      escapeValue: false,
+    },
+    backend: {
+      loadPath: '/react-app/locales/{{lng}}/{{ns}}.json',
+    },
+  });
 
 export default i18n;

@@ -1,13 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
-import { useAuthContext } from "../provider/AuthProvider";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { format, addDays, subDays } from "date-fns";
-import { FreeMode } from 'swiper/modules';
-import { OverlayTrigger, Popover } from "react-bootstrap";
+import { addDays, format, subDays } from "date-fns";
 import nb from "date-fns/locale/nb";
-import { useConfigProvider } from "../provider/ConfigProvider";
+import { useState } from "react";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useConfigProvider } from "../provider/ConfigProvider";
 import { FullscreenLoader } from "./FullscreenLoader";
 
 const Rooms = () => {
@@ -36,9 +33,9 @@ const Table = ({ selectedDate, setSelectedDate, rooms }) => {
     const generateTimeSlots = () => {
         let slots = [];
         let start = new Date(selectedDate); // Use selectedDate
-        start.setHours(8, 30, 0, 0);
+        start.setHours(8, 0, 0, 0);
         let end = new Date(selectedDate); // Use selectedDate
-        end.setHours(19, 30, 0, 0);
+        end.setHours(23, 30, 0, 0);
 
         while (start <= end) {
             slots.push(format(start, "HH:mm")); // Format as HH:MM

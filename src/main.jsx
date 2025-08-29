@@ -19,7 +19,7 @@ library.add(fas, far, fal, fad)
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('booking-app')).render(
     <MsalProvider instance={msalInstance}>
         <AuthProvider>
             <ConfigProvider>

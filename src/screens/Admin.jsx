@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import { useAuthContext } from "../provider/AuthProvider";
 import { useConfigProvider } from "../provider/ConfigProvider";
+import { FullscreenLoader } from "./FullscreenLoader";
 
 const AdminContext = createContext();
 const useAdminContext = () => {
@@ -19,13 +20,42 @@ const useAdminContext = () => {
 const AdminProvider = ({ children }) => {
     const { apiCall } = useAuthContext();
     const { users, updateUsers, rooms } = useConfigProvider();
+    const [user, setUser] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedTab, setSelectedTab] = useState("leietakere");
     const [savingUserDetails, setSavingUserDetails] = useState(false);
     const [deletingUser, setDeletingUser] = useState(false);
+    const [hasAccess, setHasAccess] = useState(null);
+    const accessToken = localStorage.getItem('hatchbooking_admin_token');
+
+    useEffect(() => {
+        const verifyToken = async () => {
+            if (!accessToken) {
+                setHasAccess(false);
+                return;
+            }
+
+            try {
+                const res = await apiCall({
+                    action: 'validateAdminToken',
+                    adminToken: accessToken
+                });
+                setHasAccess(res.success);
+            } catch (err) {
+                setHasAccess(false);
+            }
+        };
+
+        verifyToken();
+    }, [accessToken, apiCall]);
+
+
+    if (hasAccess === null) return <FullscreenLoader theme="light" />; // loading
+    if (!hasAccess) return <Login setUser={setUser} />;
 
     return (
         <AdminContext.Provider value={{
+            user,
             users,
             rooms,
             selectedUser,
@@ -91,10 +121,115 @@ const AdminProvider = ({ children }) => {
                         setSelectedTab("leietakere");
                         setDeletingUser(false);
                     })
+            },
+            updateUserInfo: (data) => {
+                setUser(data)
+            },
+            logout: async () => {
+                await apiCall({
+                    action: 'adminLogout',
+                    adminToken: accessToken
+                })
+                    .then((res) => {
+                        if (res.success) {
+                            localStorage.removeItem('hatchbooking_admin_token');
+                            setUser([]);
+                        }
+                    })
             }
         }}>
             {children}
         </AdminContext.Provider>
+    )
+}
+
+const Login = ({ setUser }) => {
+    const { apiCall } = useAuthContext();
+    const [email, setEmail] = useState(undefined);
+    const [password, setPassword] = useState(undefined);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(undefined);
+
+    // Greeting based on time
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return "God morgen!";
+        if (hour < 18) return "God ettermiddag!";
+        return "God kveld!";
+    };
+
+    // Login into modx
+    const login = async () => {
+        setLoading(true);
+        setError(undefined);
+
+        await apiCall({
+            action: 'adminLogin',
+            username: email,
+            password
+        })
+            .then((res) => {
+                if (!res.success) {
+                    setError(res.message);
+                }
+
+                // Save userinfo
+                setUser(res.data);
+
+                // Save accesstoken in localstorage
+                localStorage.setItem('hatchbooking_admin_token', res.data.token)
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
+
+    return (
+        <section id="admin-login">
+            <div className="d-flex h-100">
+                <div className="login-item-left d-flex justify-content-center">
+                    <div className="admin-login-box rounded-4 p-3 h-100 d-flex flex-column justify-content-center mx-2 mx-xl-5">
+                        <h2 className="text-body">{getGreeting()}</h2>
+                        <p>Logg inn med MODX brukeren din for å få tilgang til Admin</p>
+
+                        {error && (
+                            <div className="alert alert-danger mt-3" role="alert">
+                                {error}
+                            </div>
+                        )}
+
+                        <div className="d-flex flex-column gap-3 mt-4">
+                            <Input
+                                value={email}
+                                onChange={setEmail}
+                                placeholder="Brukernavn"
+                                classes="white-input"
+                                type="email"
+                            />
+                            <Input
+                                value={password}
+                                onChange={setPassword}
+                                placeholder="Passord"
+                                classes="white-input"
+                                type="password"
+                            />
+
+                            <Button
+                                text="Login"
+                                type="primary"
+                                onClick={login}
+                                disabled={!email || !password}
+                                loading={loading}
+                                rightIcon="arrow-right"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="login-item-right">
+                    <img src="https://www.catchmedia.no/files/images/HATCH/hatch-leieplasser-5830.jpg" className="w-100 h-100" style={{ objectFit: 'cover' }} />
+                </div>
+            </div>
+        </section>
     )
 }
 
@@ -115,12 +250,12 @@ const Admin = () => (
 )
 
 const Content = () => {
-    const { selectedTab, handleTabClick, selectedUser } = useAdminContext();
+    const { selectedTab, handleTabClick, logout } = useAdminContext();
 
     return (
         <div className="row gy-4">
             <div className="col-lg-4">
-                <div className="d-flex flex-column gap-4">
+                <div className="d-flex flex-column gap-4 h-100">
                     <Button
                         text="Leietakere"
                         rightIcon="chevron-right"
@@ -134,6 +269,14 @@ const Content = () => {
                         classes="py-4 d-flex justify-content-between align-items-center"
                         type={selectedTab === "bookinger" ? "primary" : "white"}
                         onClick={() => handleTabClick("bookinger")}
+                    />
+
+                    <Button
+                        text="Logg ut"
+                        rightIcon="left-from-bracket"
+                        classes="py-4 d-flex justify-content-between align-items-center mt-auto"
+                        type="white"
+                        onClick={logout}
                     />
                 </div>
             </div>
@@ -168,11 +311,27 @@ const Content = () => {
 
 const Users = () => {
     const { users, handleAddUser } = useAdminContext();
+    const [searchValue, setSearchValue] = useState('');
+
+    // Filter users based on searchValue
+    const filteredUsers = users
+        .filter(user =>
+            user.displayName.toLowerCase().includes(searchValue.toLowerCase()) || user.mail.toLowerCase().includes(searchValue.toLowerCase())
+        )
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
 
     return (
         <>
             <div className="row align-items-center">
-                <div className="col text-end">
+                <div className="col">
+                    <Input
+                        placeholder="Søk..."
+                        classes="white-input w-100"
+                        value={searchValue}
+                        onChange={setSearchValue}
+                    />
+                </div>
+                <div className="col-auto text-end">
                     <Button
                         text="Legg til"
                         leftIcon="plus"
@@ -181,13 +340,16 @@ const Users = () => {
                 </div>
             </div>
 
-            <div className="row mt-2 gy-4 overflow-scroll" style={{ height: 'calc(100vh - 250px)' }}>
-                {users.sort((a, b) => a.displayName.localeCompare(b.displayName)).map((user, index) => (
+            <div
+                className="row mt-2 gy-4 overflow-auto"
+                style={{ maxHeight: 'calc(100vh - 250px)' }}
+            >
+                {filteredUsers.map((user, index) => (
                     <UserItem key={index} user={user} />
                 ))}
             </div>
         </>
-    )
+    );
 }
 
 const UserItem = ({ user }) => {
@@ -197,7 +359,7 @@ const UserItem = ({ user }) => {
         <div className="col-12 d-flex justify-content-between align-items-center">
             <div className="d-flex align-items-center">
                 <FontAwesomeIcon icon={["far", user.hidden ? "eye-slash" : "eye"]} className="me-2 text-muted" />
-                <h4 className="text-body mb-0 text-decoration-underline cursor-pointer" onClick={() => handleUserClick(user)}>{user.displayName}</h4>
+                <a href="#" className="h4 text-body mb-0 text-decoration-underline cursor-pointer" onClick={() => handleUserClick(user)}>{user.displayName}</a>
             </div>
             <span className="text-muted">{user.mail}</span>
         </div>
@@ -219,7 +381,7 @@ const UserDetail = () => {
     }
 
     const missingFields = () => {
-        return !name || !email || !pin;
+        return !name || !email;
     }
 
     const handleEmailChange = (value) => {
@@ -244,7 +406,10 @@ const UserDetail = () => {
 
     return (
         <>
-            <div className="row">
+            <div className="row align-items-center">
+                <div className="col-auto">
+                    {user.azure ? "Azure bruker" : "Egendefinert bruker"}
+                </div>
                 <div className="col text-end">
                     <Button
                         text="Lukk"

@@ -87,7 +87,7 @@ export const SelectUser = () => {
                 </a>
             </div>
             <div className="col-md-6">
-                <div className="bg-white-5 px-4 py-2 rounded-3 custom-vh-90 overflow-auto">
+                <div className="bg-white-5 py-2 rounded-3 custom-vh-90 overflow-auto">
                     {users && users
                         .filter((user) => user.hidden != true)
                         .sort((a, b) => a.displayName.localeCompare(b.displayName))
@@ -481,7 +481,7 @@ export const BookingDetails = () => {
 const User = ({ id, displayName, mail, lastItem, onClick }) => {
     return (
         <div
-            className="d-flex align-items-center justify-content-between booking-user py-2 my-2"
+            className="d-flex align-items-center justify-content-between booking-user py-3 px-4"
             key={id}
             onClick={onClick}
             style={{ cursor: 'pointer' }}

@@ -312,3 +312,57 @@ h1 {
 .primary-borders * {
     border-color: var(--bs-primary) !important;
 }
+
+#admin-login {
+    height: 100vh;
+    width: 100vw;
+}
+
+.admin-login-box {
+    max-width: 500px;
+}
+
+.login-item-left {
+    flex: 12;
+}
+
+.login-item-right {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .login-item-left {
+        flex: 6;
+    }
+
+    .login-item-right {
+        display: block;
+        flex: 6;
+    }
+}
+
+@media (min-width: 992px) {
+    .login-item-left {
+        flex: 5;
+    }
+
+    .login-item-right {
+        display: block;
+        flex: 7;
+    }
+}
+
+@media (min-width: 1200px) {
+    .login-item-left {
+        flex: 4;
+    }
+
+    .login-item-right {
+        display: block;
+        flex: 8;
+    }
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}

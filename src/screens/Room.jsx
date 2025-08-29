@@ -187,7 +187,7 @@ const Countdown = ({ totalDuration, remainingTime, currentEvent }) => {
                             </>
                         ) : (
                             <div className="d-flex flex-column align-items-center mt-3 mb-5">
-                                <div className="round-add-button p-5" onClick={() => navigate(`/${params.roomEmail}/booking`)}>
+                                <div className="round-add-button p-5 cursor-pointer" onClick={() => navigate(`/${params.roomEmail}/booking`)}>
                                     <FontAwesomeIcon icon={["far", "plus"]} size="4x" />
                                 </div>
 
