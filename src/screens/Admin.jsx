@@ -359,7 +359,7 @@ const UserItem = ({ user }) => {
         <div className="col-12 d-flex justify-content-between align-items-center">
             <div className="d-flex align-items-center">
                 <FontAwesomeIcon icon={["far", user.hidden ? "eye-slash" : "eye"]} className="me-2 text-muted" />
-                <a href="#" className="h4 text-body mb-0 text-decoration-underline cursor-pointer" onClick={() => handleUserClick(user)}>{user.displayName}</a>
+                <div className="h4 text-body mb-0 text-decoration-underline cursor-pointer" onClick={() => handleUserClick(user)}>{user.displayName}</div>
             </div>
             <span className="text-muted">{user.mail}</span>
         </div>
